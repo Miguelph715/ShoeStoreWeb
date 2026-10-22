@@ -41,7 +41,7 @@ class SeedController extends Controller
                 ['gestor', 'gestor@shoestore.pt', User::STATUS_ACTIVE, 'gestor', 'Gestor de Loja', '244000002', 'Rua da Loja 1', '2400-100', 'Leiria', null],
                 ['cliente1', 'cliente1@exemplo.pt', User::STATUS_ACTIVE, 'cliente', 'Ana Ferreira', '912345678', 'Rua das Flores 12', '2410-050', 'Leiria', '123456789'],
                 ['cliente2', 'cliente2@exemplo.pt', User::STATUS_ACTIVE, 'cliente', 'Rui Santos', '923456789', 'Av. da Republica 45', '2430-203', 'Marinha Grande', null],
-                //inativo: ainda nao verificou o email, nao consegue entrar
+                //inativo: conta desativada, nao consegue entrar
                 ['inativo1', 'inativo1@exemplo.pt', User::STATUS_INACTIVE, 'cliente', 'Marta Lopes', '934567890', 'Rua do Mercado 7', '2495-300', 'Fatima', null],
                 //eliminado: soft delete, nao consegue entrar
                 ['eliminado1', 'eliminado1@exemplo.pt', User::STATUS_DELETED, 'cliente', 'Pedro Antunes', '965432109', 'Travessa Nova 3', '2400-300', 'Leiria', null],
@@ -81,6 +81,12 @@ class SeedController extends Controller
             $tamanhos = range(35, 47);
             $db->createCommand()->batchInsert('{{%tamanho}}', ['numero'], array_map(fn($n) => [$n], $tamanhos))->execute();
             $db->createCommand()->batchInsert('{{%metodo_pagamento}}', ['nome'], [['MB Way'], ['Multibanco'], ['Cartão de crédito']])->execute();
+            //cores: nome e codigo hexadecimal
+            $cores = [
+                ['Preto', '#111111'], ['Branco', '#FFFFFF'], ['Cinzento', '#808080'], ['Azul', '#1E40AF'],
+                ['Vermelho', '#C62828'], ['Verde', '#2E7D32'], ['Castanho', '#6D4C41'], ['Bege', '#D7C4A3'],
+            ];
+            $db->createCommand()->batchInsert('{{%cor}}', ['nome', 'codigo_hex'], $cores)->execute();
 
             //ids por nome
             $idMarca = array_column($db->createCommand('SELECT nome, id FROM {{%marca}}')->queryAll(), 'id', 'nome');
@@ -110,6 +116,26 @@ class SeedController extends Controller
                 ['Clarks', 'Botas', 'Clarks Desert Boot', 'Bota de camurça com sola de crepe.', 134.99, 39, 46],
                 ['Clarks', 'Formais', 'Clarks Oxford Clássico', 'Sapato Oxford de cabedal para ocasiões formais.', 119.99, 40, 45],
             ];
+            //cores disponiveis de cada produto
+            $coresDoProduto = [
+                'Nike Air Max 90' => ['Branco', 'Preto', 'Cinzento'],
+                "Nike Air Force 1 '07" => ['Branco', 'Preto'],
+                'Nike Pegasus 40' => ['Preto', 'Azul', 'Cinzento'],
+                'Nike Victori One Slide' => ['Preto', 'Branco', 'Azul'],
+                'Adidas Ultraboost Light' => ['Branco', 'Preto', 'Azul'],
+                'Adidas Superstar' => ['Branco', 'Preto'],
+                'Adidas Stan Smith' => ['Branco', 'Verde'],
+                'Adidas Adilette Shower' => ['Preto', 'Branco', 'Azul', 'Vermelho'],
+                'New Balance 574' => ['Cinzento', 'Azul', 'Preto'],
+                'New Balance 530' => ['Branco', 'Cinzento'],
+                'Puma Suede Classic' => ['Preto', 'Azul', 'Vermelho'],
+                'Puma RS-X' => ['Branco', 'Preto', 'Verde'],
+                'Converse Chuck Taylor All Star' => ['Preto', 'Branco', 'Vermelho'],
+                'Timberland 6-Inch Premium' => ['Castanho', 'Preto'],
+                'Clarks Desert Boot' => ['Castanho', 'Bege', 'Preto'],
+                'Clarks Oxford Clássico' => ['Preto', 'Castanho'],
+            ];
+            $idCor = array_column($db->createCommand('SELECT nome, id FROM {{%cor}}')->queryAll(), 'id', 'nome');
             //stock "variado" mas sempre igual (alguns tamanhos a 0 para testar "esgotado")
             $stocks = [0, 0, 2, 3, 4, 5, 6, 8, 10, 12];
             foreach ($produtos as $i => [$marca, $categoria, $nome, $descricao, $preco, $min, $max]) {
@@ -123,6 +149,9 @@ class SeedController extends Controller
                     $linhas[] = [$idProduto, $idTamanho[$n], $stocks[(($i + 1) * 7 + $n * 3) % 10]];
                 }
                 $db->createCommand()->batchInsert('{{%produto_tamanho}}', ['produto_id', 'tamanho_id', 'stock'], $linhas)->execute();
+                //as cores deste produto
+                $linhasCor = array_map(fn($c) => [$idProduto, $idCor[$c]], $coresDoProduto[$nome]);
+                $db->createCommand()->batchInsert('{{%produto_cor}}', ['produto_id', 'cor_id'], $linhasCor)->execute();
             }
 
             $transacao->commit();
@@ -132,7 +161,7 @@ class SeedController extends Controller
             return self::EXIT_CODE_ERROR;
         }
 
-        echo "Dados de teste criados: 6 utilizadores, 7 marcas, 4 categorias, 13 tamanhos, 16 produtos com stock e 3 metodos de pagamento.\n";
+        echo "Dados de teste criados: 6 utilizadores, 7 marcas, 4 categorias, 13 tamanhos, 8 cores, 16 produtos (com stock e cores) e 3 metodos de pagamento.\n";
         return self::EXIT_CODE_NORMAL;
     }
 }
