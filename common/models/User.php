@@ -56,7 +56,57 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
+            //username e email: obrigatorios e unicos (para o formulario de edicao)
+            ['username', 'trim'],
+            ['username', 'required'],
+            ['username', 'string', 'min' => 2, 'max' => 255],
+            ['username', 'unique'],
+            ['email', 'trim'],
+            ['email', 'required'],
+            ['email', 'email'],
+            ['email', 'string', 'max' => 255],
+            ['email', 'unique'],
         ];
+    }
+
+    /**
+     * SOFT DELETE: marca o utilizador como eliminado (status 0) sem apagar a linha.
+     * O login so aceita status 10, por isso um utilizador eliminado deixa de poder entrar.
+     */
+    public function softDelete(): bool
+    {
+        $this->status = self::STATUS_DELETED;
+        //save(false, [...]): grava so estas colunas, sem validar o resto
+        return $this->save(false, ['status', 'updated_at']);
+    }
+
+    /**
+     * Reverte o soft delete: o utilizador volta a ficar ativo (status 10).
+     */
+    public function restore(): bool
+    {
+        $this->status = self::STATUS_ACTIVE;
+        return $this->save(false, ['status', 'updated_at']);
+    }
+
+    /**
+     * Os estados possiveis, para listas pendentes e filtros.
+     */
+    public static function statusList(): array
+    {
+        return [
+            self::STATUS_ACTIVE => 'Ativo',
+            self::STATUS_INACTIVE => 'Inativo',
+            self::STATUS_DELETED => 'Eliminado',
+        ];
+    }
+
+    /**
+     * O nome do estado do utilizador: $user->statusLabel
+     */
+    public function getStatusLabel(): string
+    {
+        return self::statusList()[$this->status] ?? 'Desconhecido';
     }
 
     /**
