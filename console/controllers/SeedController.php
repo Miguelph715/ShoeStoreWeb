@@ -62,7 +62,9 @@ class SeedController extends Controller
                 }
                 $db->createCommand()->insert('{{%perfil}}', [
                     'user_id' => $user->id, 'nome' => $nome, 'telefone' => $telefone, 'morada' => $morada,
-                    'codigo_postal' => $cp, 'cidade' => $cidade, 'nif' => $nif, 'created_at' => $agora, 'updated_at' => $agora,
+                    'codigo_postal' => $cp, 'cidade' => $cidade, 'nif' => $nif, 'created_at' => $agora,
+                    'updated_at' => $agora,
+                    'user_type' => $role, // para dar o role de admin ao admin
                 ])->execute();
                 //ligar o utilizador ao role (tabela auth_assignment)
                 $auth->assign($auth->getRole($role), $user->id);
