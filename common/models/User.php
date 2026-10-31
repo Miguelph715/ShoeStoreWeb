@@ -11,7 +11,7 @@ use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
 /**
- * User model
+ * user model
  *
  * @property int $id
  * @property string $username
@@ -66,6 +66,20 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
             ['email', 'unique'],
+        ];
+    }
+    /**
+     * Os nomes dos campos, em portugues: aparecem nos titulos das colunas e nas mensagens de erro.
+     */
+    public function attributeLabels(): array
+    {
+        return [
+            'id' => 'ID',
+            'username' => 'Nome de utilizador',
+            'email' => 'Email',
+            'status' => 'Estado',
+            'created_at' => 'Criado em',
+            'updated_at' => 'Atualizado em',
         ];
     }
 

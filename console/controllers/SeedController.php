@@ -56,7 +56,7 @@ class SeedController extends Controller
                 if ($status === User::STATUS_INACTIVE) {
                     $user->generateEmailVerificationToken();
                 }
-                //o TimestampBehavior do User preenche created_at e updated_at
+                //o TimestampBehavior do user preenche created_at e updated_at
                 if (!$user->save()) {
                     throw new \RuntimeException("Utilizador $username: " . json_encode($user->errors));
                 }

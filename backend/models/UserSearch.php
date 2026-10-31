@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace backend\models;
 
 use yii\base\Model;
@@ -7,18 +9,25 @@ use yii\data\ActiveDataProvider;
 use common\models\User;
 
 /**
- * UserSearch represents the model behind the search form of `common\models\User`.
+ * UserSearch represents the model behind the search form of `common\models\user`.
+ */
+/**
+ * Filtros da lista de utilizadores: id, username, email, estado e role.
  */
 class UserSearch extends User
 {
+
+    //filtro por role (o role vive na tabela auth_assignment, nao na user)
+    public $role;
+
     /**
      * {@inheritdoc}
      */
     public function rules(): array
     {
         return [
-            [['id', 'status', 'created_at', 'updated_at'], 'integer'],
-            [['username', 'auth_key', 'password_hash', 'password_reset_token', 'email', 'verification_token'], 'safe'],
+            [['id', 'status'], 'integer'],
+            [['username', 'email', 'role'], 'safe'],
         ];
     }
 
@@ -39,38 +48,33 @@ class UserSearch extends User
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $formName = null)
+    /**
+     * Cria o data provider da lista, com os filtros aplicados.
+     */
+    public function search(array $params, string|null $formName = null): ActiveDataProvider
     {
         $query = User::find();
 
-        // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id' => SORT_ASC]],
         ]);
 
         $this->load($params, $formName);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ]);
+        $query->andFilterWhere(['user.id' => $this->id, 'user.status' => $this->status]);
+        $query->andFilterWhere(['like', 'user.username', $this->username])
+            ->andFilterWhere(['like', 'user.email', $this->email]);
 
-        $query->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'auth_key', $this->auth_key])
-            ->andFilterWhere(['like', 'password_hash', $this->password_hash])
-            ->andFilterWhere(['like', 'password_reset_token', $this->password_reset_token])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'verification_token', $this->verification_token]);
+        //filtrar por role: junta a tabela auth_assignment
+        if ($this->role !== null && $this->role !== '') {
+            $query->innerJoin('auth_assignment', 'auth_assignment.user_id = user.id')
+                ->andWhere(['auth_assignment.item_name' => $this->role]);
+        }
 
         return $dataProvider;
     }

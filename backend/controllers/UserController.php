@@ -1,30 +1,50 @@
 <?php
 
+declare(strict_types=1);
+
 namespace backend\controllers;
 
-use common\models\User;
+use backend\models\UserForm;
 use backend\models\UserSearch;
+use common\models\Perfil;
+use common\models\User;
+use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
- * UserController implements the CRUD actions for User model.
+ * Gestao de utilizadores no back-office: CRUD completo com SOFT DELETE.
+ * Eliminar nao apaga a linha, so muda o status para 0 (e da para restaurar).
  */
 class UserController extends Controller
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return array_merge(
             parent::behaviors(),
             [
+                //so quem tem a permissao gerirUtilizadores (o admin) entra neste controlador
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['gerirUtilizadores'],
+                        ],
+                    ],
+                ],
+                //eliminar e restaurar alteram dados: so por POST
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
+                        'restore' => ['POST'],
                     ],
                 ],
             ]
@@ -32,11 +52,9 @@ class UserController extends Controller
     }
 
     /**
-     * Lists all User models.
-     *
-     * @return string
+     * Lista os utilizadores (com filtros por username, email, estado e role).
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new UserSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -48,33 +66,29 @@ class UserController extends Controller
     }
 
     /**
-     * Displays a single User model.
-     * @param int $id
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
+     * Mostra um utilizador, com o perfil e o role.
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
+        $model = $this->findModel($id);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'perfil' => Perfil::findOne(['user_id' => $model->id]),
+            'roles' => array_keys(Yii::$app->authManager->getRolesByUser($model->id)),
         ]);
     }
 
     /**
-     * Creates a new User model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * Cria um utilizador (com perfil e role).
      */
-    public function actionCreate()
+    public function actionCreate(): string|Response
     {
-        $model = new User();
+        $model = new UserForm();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Utilizador criado.');
+            return $this->redirect(['view', 'id' => $model->user->id]);
         }
 
         return $this->render('create', [
@@ -83,18 +97,15 @@ class UserController extends Controller
     }
 
     /**
-     * Updates an existing User model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * Altera um utilizador (dados, estado e role).
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id): string|Response
     {
-        $model = $this->findModel($id);
+        $model = UserForm::fromUser($this->findModel($id));
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            Yii::$app->session->setFlash('success', 'Utilizador atualizado.');
+            return $this->redirect(['view', 'id' => $model->user->id]);
         }
 
         return $this->render('update', [
@@ -103,32 +114,47 @@ class UserController extends Controller
     }
 
     /**
-     * Deletes an existing User model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * SOFT DELETE: marca o utilizador como eliminado (status 0), sem apagar a linha.
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        //o admin nao se pode eliminar a si proprio
+        if ($model->id === (int) Yii::$app->user->id) {
+            Yii::$app->session->setFlash('error', 'Não podes eliminar a tua própria conta.');
+            return $this->redirect(['index']);
+        }
+
+        $model->softDelete();
+        Yii::$app->session->setFlash('success', 'Utilizador "' . $model->username . '" eliminado. Pode ser restaurado.');
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the User model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id
-     * @return User the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * Reverte o soft delete: o utilizador volta a ficar ativo (status 10).
      */
-    protected function findModel($id)
+    public function actionRestore(int $id): Response
+    {
+        $model = $this->findModel($id);
+        $model->restore();
+        Yii::$app->session->setFlash('success', 'Utilizador "' . $model->username . '" restaurado.');
+
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Procura o utilizador pelo id (tambem os eliminados, para os poder restaurar).
+     *
+     * @throws NotFoundHttpException se nao existir
+     */
+    protected function findModel(int $id): User
     {
         if (($model = User::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('O utilizador não existe.');
     }
 }

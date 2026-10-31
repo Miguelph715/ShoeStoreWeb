@@ -14,6 +14,12 @@ $items = [
         'url' => ['/site/index'],
     ],
     [
+        //so aparece a quem tem a permissao gerirUtilizadores (o admin)
+        'label' => 'Utilizadores',
+        'url' => ['/user/index'],
+        'visible' => Yii::$app->user->can('gerirUtilizadores'),
+    ],
+    [
         'label' => 'Login',
         'url' => ['/site/login'],
         'visible' => Yii::$app->user->isGuest,
