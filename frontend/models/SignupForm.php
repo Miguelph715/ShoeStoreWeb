@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace frontend\models;
 
+use common\models\Perfil;
 use common\models\User;
 use Yii;
 use yii\base\Model;
-use yii\mail\MailerInterface;
 
 /**
- * Signup form
+ * Registo de um cliente no front-office.
+ * A conta fica logo ativa, com o role "cliente" do RBAC e o perfil criado.
  */
 class SignupForm extends Model
 {
     public string $username = '';
     public string $email = '';
     public string $password = '';
+
     /**
      * {@inheritdoc}
      */
@@ -25,14 +27,14 @@ class SignupForm extends Model
         return [
             ['username', 'trim'],
             ['username', 'required'],
-            ['username', 'unique', 'targetClass' => User::class, 'message' => 'This username has already been taken.'],
-            ['username', 'string', 'min' => 2, 'max' => 255],
+            ['username', 'unique', 'targetClass' => User::class, 'message' => 'Este nome de utilizador já existe.'],
+            ['username', 'string', 'min' => 2, 'max' => 128],
 
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
-            ['email', 'unique', 'targetClass' => User::class, 'message' => 'This email address has already been taken.'],
+            ['email', 'unique', 'targetClass' => User::class, 'message' => 'Este email já está registado.'],
 
             ['password', 'required'],
             ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
@@ -40,52 +42,49 @@ class SignupForm extends Model
     }
 
     /**
-     * Signs user up.
-     *
-     * @param MailerInterface $mailer the mailer component.
-     * @param string $supportEmail the support email address.
-     * @param string $appName the application name.
-     *
-     * @return bool|null whether the creating new account was successful and email was sent.
+     * Regista o utilizador. Devolve o User criado, ou null se algo falhar.
+     * As 3 gravacoes (user, perfil, role) fazem-se numa transacao: ou ficam todas, ou nenhuma.
      */
-    public function signup(MailerInterface $mailer, string $supportEmail, string $appName): bool|null
+    public function signup(): User|null
     {
         if (!$this->validate()) {
             return null;
         }
 
-        $user = new User();
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            //1. o utilizador, ativo logo (status 10), sem email de verificacao
+            $user = new User();
+            $user->username = $this->username;
+            $user->email = $this->email;
+            $user->status = User::STATUS_ACTIVE;
+            $user->setPassword($this->password);
+            $user->generateAuthKey();
+            if (!$user->save()) {
+                throw new \RuntimeException('Nao foi possivel criar o utilizador.');
+            }
 
-        $user->username = $this->username;
-        $user->email = $this->email;
+            //2. o perfil (o nome comeca igual ao username; o cliente pode mudar mais tarde)
+            $perfil = new Perfil();
+            $perfil->user_id = $user->id;
+            $perfil->nome = $this->username;
+            $perfil->user_type = Perfil::TYPE_CLIENTE;
+            if (!$perfil->save()) {
+                throw new \RuntimeException('Nao foi possivel criar o perfil.');
+            }
 
-        $user->setPassword($this->password);
-        $user->generateAuthKey();
-        $user->generateEmailVerificationToken();
+            //3. o role do RBAC (grava na tabela auth_assignment)
+            $auth = Yii::$app->authManager;
+            $auth->assign($auth->getRole('cliente'), $user->id);
 
-        return $user->save() && $this->sendEmail($mailer, $user, $supportEmail, $appName);
-    }
+            $transaction->commit();
 
-    /**
-     * Sends confirmation email to user.
-     *
-     * @param MailerInterface $mailer the mailer component.
-     * @param User $user user model to which the email should be sent.
-     * @param string $supportEmail the support email address.
-     * @param string $appName the application name.
-     *
-     * @return bool whether the email was sent.
-     */
-    protected function sendEmail(MailerInterface $mailer, User $user, string $supportEmail, string $appName): bool
-    {
-        return $mailer
-            ->compose(
-                ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
-                ['user' => $user],
-            )
-            ->setFrom([$supportEmail => $appName . ' robot'])
-            ->setTo($this->email)
-            ->setSubject('Account registration at ' . $appName)
-            ->send();
+            return $user;
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            Yii::error('Registo falhou: ' . $e->getMessage());
+
+            return null;
+        }
     }
 }

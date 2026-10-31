@@ -35,6 +35,11 @@ class SiteController extends Controller
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+                    [
+                        //tudo o resto: so quem pode aceder ao back-office (gestor e admin)
+                        'allow' => true,
+                        'roles' => ['acederBackoffice'],
+                    ],
                 ],
             ],
             'verbs' => [
@@ -75,7 +80,8 @@ class SiteController extends Controller
      */
     public function actionLogin(): string|Response
     {
-        if (!Yii::$app->user->isGuest) {
+        //quem ja tem sessao e permissao entra direto
+        if (!Yii::$app->user->isGuest && Yii::$app->user->can('acederBackoffice')) {
             return $this->goHome();
         }
 
@@ -83,7 +89,12 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            if (Yii::$app->user->can('acederBackoffice')) {
+                return $this->goBack();
+            }
+            //a password estava certa, mas e so cliente: fecha a sessao e mostra o erro
+            Yii::$app->user->logout();
+            $model->addError('username', 'Não tens acesso ao back-office.');
         }
 
         $model->password = '';

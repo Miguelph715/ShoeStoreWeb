@@ -179,14 +179,10 @@ class SiteController extends Controller
     {
         $model = new SignupForm();
 
-        $signed = $model->load(Yii::$app->request->post()) && $model->signup(
-            $this->mailer,
-            Yii::$app->params['supportEmail'],
-            Yii::$app->name,
-        );
-
-        if ($signed) {
-            Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
+        if ($model->load(Yii::$app->request->post()) && ($user = $model->signup()) !== null) {
+            //a conta fica logo ativa: o cliente entra automaticamente
+            Yii::$app->user->login($user);
+            Yii::$app->session->setFlash('success', 'Registo concluído. Bem-vindo, ' . $user->username . '!');
             return $this->goHome();
         }
 
