@@ -5,27 +5,27 @@ declare(strict_types=1);
 /** @var yii\web\View $this */
 /** @var string $content */
 
-use backend\assets\AppAsset;
+use backend\assets\AdminAsset;
 use yii\helpers\Html;
 
-AppAsset::register($this);
+AdminAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
-<!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="h-100" data-bs-theme="light">
-<head>
-    <meta charset="<?= Yii::$app->charset ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <?php $this->registerCsrfMetaTags() ?>
-    <title><?= Html::encode($this->title) ?></title>
-    <?php $this->head() ?>
-</head>
-<body class="d-flex flex-column justify-content-center align-items-center vh-100">
-<?php $this->beginBody() ?>
+    <!DOCTYPE html>
+    <html lang="<?= Yii::$app->language ?>">
+    <head>
+        <meta charset="<?= Yii::$app->charset ?>">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <?php $this->registerCsrfMetaTags() ?>
+        <title><?= Html::encode($this->title) ?> | <?= Html::encode(Yii::$app->name) ?></title>
+        <?php $this->head() ?>
+    </head>
+    <body class="shoe-login-page">
+    <?php $this->beginBody() ?>
 
-<?= $content ?>
+    <?= $content ?>
 
-<?php $this->endBody() ?>
-</body>
-</html>
+    <?php $this->endBody() ?>
+    </body>
+    </html>
 <?php $this->endPage();

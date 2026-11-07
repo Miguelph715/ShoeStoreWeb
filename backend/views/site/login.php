@@ -3,107 +3,64 @@
 declare(strict_types=1);
 
 /** @var yii\web\View $this */
-/** @var yii\bootstrap5\ActiveForm $form */
+/** @var yii\bootstrap4\ActiveForm $form */
 /** @var \common\models\LoginForm $model */
 
-use yii\bootstrap5\ActiveForm;
-use yii\bootstrap5\Html;
+use yii\bootstrap4\ActiveForm;
+use yii\helpers\Html;
 
-$this->title = 'Sign in to your account';
-$htmlIcon = <<<HTML
-{label}<div class="input-group"><span class="input-group-text" aria-hidden="true">%s</span>{input}</div>{error}{hint}
-HTML;
-$labelOptions = ['class' => 'form-label fw-semibold small'];
+$this->title = 'Entrar';
 ?>
-<div class="card border-0 overflow-hidden login-split-card">
-    <div class="row g-0">
+<div class="shoe-login">
 
-        <!-- Brand panel -->
-        <div class="col-md-5 d-none d-md-flex login-brand-panel text-white">
-            <div class="d-flex flex-column justify-content-between p-4 p-lg-5 w-100">
-                <div>
-                    <?= Html::img(
-                        Yii::getAlias('@web/images/yii3_full_white_for_dark.svg'),
-                        [
-                            'alt' => 'Yii Framework',
-                            'class' => 'mb-4',
-                            'height' => 40,
-                        ],
-                    ) ?>
-                </div>
-                <div>
-                    <h2 class="fw-bold mb-3 login-brand-title">
-                        Backend<br>Administration
-                    </h2>
-                    <p class="opacity-75 mb-0 login-brand-text">
-                        Manage your Yii2 application with the advanced admin dashboard.
-                    </p>
-                </div>
-            </div>
+    <!-- Painel da marca (esquerda; em ecras pequenos fica so o logotipo) -->
+    <div class="shoe-login-brand">
+        <div class="shoe-login-logo"><i class="fas fa-shoe-prints"></i> ShoeStore</div>
+        <div class="shoe-login-claim">
+            <h2>Gere a loja,<br>passo a passo.</h2>
+            <p>Catálogo, stock e encomendas num só sítio.</p>
         </div>
+    </div>
 
-        <!-- Form panel -->
-        <div class="col-md-7">
-            <div class="p-4 p-lg-5">
-                <div class="text-center mb-4">
-                    <!-- Mobile-only logo -->
-                    <div class="d-md-none mb-3">
-                        <?= Html::img(
-                            Yii::getAlias('@web/images/yii3_full_black_for_light.svg'),
-                            [
-                                'alt' => 'Yii Framework',
-                                'class' => 'login-mobile-logo',
-                                'height' => 36,
-                            ],
-                        ) ?>
-                    </div>
-                    <h1 class="h3 fw-bold mb-1"><?= Html::encode($this->title) ?></h1>
-                    <p class="text-body-secondary small">Enter your credentials to access the admin panel</p>
-                </div>
+    <!-- Formulario (direita) -->
+    <div class="shoe-login-side">
+        <div class="shoe-login-box">
+            <h1>Entrar</h1>
+            <p class="text-muted mb-4">Acesso reservado a gestores e administradores.</p>
 
-                <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
+            <?php $form = ActiveForm::begin([
+                'id' => 'login-form',
+                'enableClientValidation' => false,
+            ]); ?>
 
-                <div class="mb-3">
-                    <?= $form->field($model, 'username', [
-                        'options' => ['class' => 'mb-0'],
-                        'template' => sprintf($htmlIcon, '&#128100;'),
-                        'inputOptions' => [
-                            'class' => 'form-control',
-                            'placeholder' => 'username',
-                            'autofocus' => true,
-                        ],
-                    ])->textInput()->label('Your Username', $labelOptions) ?>
-                </div>
+            <?php
+            //se o campo tem erro, mostra um icone; a mensagem aparece num balao ao passar o rato
+            $icone = static fn(string $campo): string => $model->hasErrors($campo)
+                ? Html::tag('span', '<i class="fas fa-exclamation-circle"></i>', [
+                    'class' => 'shoe-field-alert',
+                    'tabindex' => 0,
+                    'data-tip' => $model->getFirstError($campo),
+                ])
+                : '';
+            ?>
 
-                <div class="mb-3">
-                    <?= $form->field($model, 'password', [
-                        'options' => ['class' => 'mb-0'],
-                        'template' => sprintf($htmlIcon, '&#128274;'),
-                        'inputOptions' => [
-                            'class' => 'form-control',
-                            'placeholder' => 'Password',
-                        ],
-                    ])->passwordInput()->label('Your Password', $labelOptions) ?>
-                </div>
+            <?= $form->field($model, 'username', [
+                'template' => "{label}\n<div class=\"shoe-field\">{input}" . $icone('username') . "</div>",
+            ])
+                ->textInput(['autofocus' => true, 'autocomplete' => 'off'])
+                ->label('Nome de utilizador') ?>
 
-                <div class="mb-4">
-                    <?= $form->field($model, 'rememberMe')->checkbox() ?>
-                </div>
+            <?= $form->field($model, 'password', [
+                'template' => "{label}\n<div class=\"shoe-field\">{input}" . $icone('password') . "</div>",
+            ])
+                ->passwordInput(['autocomplete' => 'new-password'])
+                ->label('Password') ?>
 
-                <div class="d-grid">
-                    <?= Html::submitButton(
-                        'Sign in',
-                        [
-                            'class' => 'btn login-btn btn-lg rounded-3 text-white',
-                            'name' => 'login-button',
-                        ],
-                    ) ?>
-                </div>
+            <?= $form->field($model, 'rememberMe')->checkbox()->label('Lembrar-me') ?>
 
-                <?php ActiveForm::end(); ?>
+            <?= Html::submitButton('Entrar', ['class' => 'btn btn-shoe btn-lg btn-block', 'name' => 'login-button']) ?>
 
-            </div>
+            <?php ActiveForm::end(); ?>
         </div>
-
     </div>
 </div>
