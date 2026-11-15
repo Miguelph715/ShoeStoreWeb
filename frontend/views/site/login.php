@@ -9,112 +9,34 @@ declare(strict_types=1);
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 
-$this->title = 'Login to your account';
-$this->params['breadcrumbs'][] = $this->title;
-$this->params['meta_description'] = 'Log in to access your Yii2 application account.';
-$this->params['meta_keywords'] = 'yii, yii2, login, sign in, authentication';
-$htmlIcon = <<<HTML
-{label}<div class="input-group"><span class="input-group-text" aria-hidden="true">%s</span>{input}</div>{error}{hint}
-HTML;
-$labelOptions = ['class' => 'form-label fw-semibold small'];
+$this->title = 'Entrar';
+$this->params['fullWidth'] = true;
+$this->params['meta_description'] = 'Entra na tua conta ShoeStore.';
 ?>
-<div class="site-login d-flex align-items-center justify-content-center py-5">
-    <div class="card border-0 overflow-hidden login-split-card">
-        <div class="row g-0">
+<section class="auth-wrap site-login">
+    <div class="auth-card">
+        <h1 class="h3 fw-bold mb-1">Entrar</h1>
+        <p class="text-secondary mb-4">Bem-vindo de volta à ShoeStore.</p>
 
-            <!-- Brand panel -->
-            <div class="col-md-5 d-none d-md-flex login-brand-panel text-white">
-                <div class="d-flex flex-column justify-content-between p-4 p-lg-5 w-100">
-                    <div>
-                        <?= Html::img(
-                            Yii::getAlias('@web/images/yii3_full_white_for_dark.svg'),
-                            [
-                                'alt' => 'Yii Framework',
-                                'class' => 'mb-4',
-                                'height' => 40,
-                            ],
-                        ) ?>
-                    </div>
-                    <div>
-                        <h2 class="fw-bold mb-3 login-brand-title">
-                            Welcome<br>Back
-                        </h2>
-                        <p class="opacity-75 mb-0 login-brand-text">
-                            Log in to access your Yii2 application and manage your account.
-                        </p>
-                    </div>
-                </div>
-            </div>
+        <?php $form = ActiveForm::begin([
+            'id' => 'login-form',
+            'enableClientValidation' => false,
+        ]); ?>
 
-            <!-- Form panel -->
-            <div class="col-md-7">
-                <div class="p-4 p-lg-5">
-                    <div class="text-center mb-4">
-                        <!-- Mobile-only logo -->
-                        <div class="d-md-none mb-3">
-                            <?= Html::img(
-                                Yii::getAlias('@web/images/yii3_full_black_for_light.svg'),
-                                [
-                                    'alt' => 'Yii Framework',
-                                    'class' => 'login-mobile-logo',
-                                    'height' => 36,
-                                ],
-                            ) ?>
-                        </div>
-                        <h1 class="h3 fw-bold mb-1"><?= Html::encode($this->title) ?></h1>
-                        <p class="text-body-secondary small">Enter your credentials to continue</p>
-                    </div>
+        <?= $form->field($model, 'username')->textInput(['autofocus' => true, 'autocomplete' => 'username']) ?>
 
-                    <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
+        <?= $form->field($model, 'password')->passwordInput(['autocomplete' => 'current-password']) ?>
 
-                    <div class="mb-3">
-                        <?= $form->field($model, 'username', [
-                            'options' => ['class' => 'mb-0'],
-                            'template' => sprintf($htmlIcon, '&#128100;'),
-                            'inputOptions' => [
-                                'class' => 'form-control',
-                                'placeholder' => 'username',
-                                'autofocus' => true,
-                            ],
-                        ])->textInput()->label('Your Username', $labelOptions) ?>
-                    </div>
+        <?= $form->field($model, 'rememberMe')->checkbox() ?>
 
-                    <div class="mb-3">
-                        <?= $form->field($model, 'password', [
-                            'options' => ['class' => 'mb-0'],
-                            'template' => sprintf($htmlIcon, '&#128274;'),
-                            'inputOptions' => [
-                                'class' => 'form-control',
-                                'placeholder' => 'Password',
-                            ],
-                        ])->passwordInput()->label('Your Password', $labelOptions) ?>
-                    </div>
-
-                    <div class="mb-4">
-                        <?= $form->field($model, 'rememberMe')->checkbox() ?>
-                    </div>
-
-                    <div class="d-grid">
-                        <?= Html::submitButton(
-                            'Login',
-                            [
-                                'class' => 'btn login-btn btn-lg rounded-3 text-white',
-                                'name' => 'login-button',
-                            ],
-                        ) ?>
-                    </div>
-
-                    <?php ActiveForm::end(); ?>
-
-                    <div class="text-body-secondary text-center mt-3 small">
-                        <?= Html::a('Forgot your password?', ['site/request-password-reset']) ?>
-                        <span class="mx-1">&middot;</span>
-                        <?= Html::a('Resend verification email', ['site/resend-verification-email']) ?>
-                    </div>
-
-                </div>
-            </div>
-
+        <div class="d-grid mt-3">
+            <?= Html::submitButton('Entrar', ['class' => 'btn btn-shoe btn-lg', 'name' => 'login-button']) ?>
         </div>
+
+        <?php ActiveForm::end(); ?>
+
+        <p class="text-center text-secondary small mt-4 mb-0">
+            Ainda não tens conta? <?= Html::a('Criar conta', ['/site/signup']) ?>
+        </p>
     </div>
-</div>
+</section>

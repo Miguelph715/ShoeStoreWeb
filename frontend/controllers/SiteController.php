@@ -21,6 +21,7 @@ use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\ErrorAction;
 use yii\web\Response;
+use yii\db\Query;
 
 /**
  * Site controller
@@ -90,7 +91,19 @@ class SiteController extends Controller
      */
     public function actionIndex(): string
     {
-        return $this->render('index');
+        //os 4 produtos ativos mais recentes, para a montra da pagina inicial
+        $produtos = (new Query())
+            ->select(['p.id', 'p.nome', 'p.preco', 'p.imagem', 'marca' => 'm.nome'])
+            ->from(['p' => 'produto'])
+            ->innerJoin(['m' => 'marca'], 'm.id = p.marca_id')
+            ->where(['p.ativo' => 1])
+            ->orderBy(['p.id' => SORT_DESC])
+            ->limit(4)
+            ->all();
+
+        return $this->render('index', [
+            'produtos' => $produtos,
+        ]);
     }
 
     /**
@@ -147,9 +160,9 @@ class SiteController extends Controller
             );
 
             if ($sent) {
-                Yii::$app->session->setFlash('success', 'Thank you for contacting us. We will respond to you as soon as possible.');
+                Yii::$app->session->setFlash('success', 'Obrigado pela tua mensagem. Responderemos assim que possível.');
             } else {
-                Yii::$app->session->setFlash('error', 'There was an error sending your message.');
+                Yii::$app->session->setFlash('error', 'Não foi possível enviar a mensagem.');
             }
 
             return $this->refresh();

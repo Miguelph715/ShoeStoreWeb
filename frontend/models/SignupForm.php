@@ -40,6 +40,17 @@ class SignupForm extends Model
             ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
         ];
     }
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels(): array
+    {
+        return [
+            'username' => 'Nome de utilizador',
+            'email' => 'Email',
+            'password' => 'Password',
+        ];
+    }
 
     /**
      * Regista o utilizador. Devolve o User criado, ou null se algo falhar.

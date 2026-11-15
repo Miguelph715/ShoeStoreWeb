@@ -1,22 +1,19 @@
 <?php
 
-/**
- * @link https://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license https://www.yiiframework.com/license/
- */
-
 declare(strict_types=1);
 
 namespace frontend\assets;
 
-use common\assets\ColorModeAsset;
+use hail812\adminlte3\assets\FontAwesomeAsset;
 use yii\bootstrap5\BootstrapAsset;
+use yii\bootstrap5\BootstrapPluginAsset;
 use yii\web\AssetBundle;
 use yii\web\YiiAsset;
 
 /**
- * Main frontend application asset bundle.
+ * Ficheiros CSS/JS do front-office (loja).
+ * Os icones vem do Font Awesome que o AdminLTE ja instalou no vendor.
+ * O BootstrapPluginAsset e o JavaScript do Bootstrap (menu lateral, menu de telemovel).
  */
 class AppAsset extends AssetBundle
 {
@@ -24,10 +21,12 @@ class AppAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'css/site.css',
+        'css/shop.css',
     ];
     public $depends = [
         YiiAsset::class,
         BootstrapAsset::class,
-        ColorModeAsset::class,
+        BootstrapPluginAsset::class,
+        FontAwesomeAsset::class,
     ];
 }

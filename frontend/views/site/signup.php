@@ -9,116 +9,33 @@ declare(strict_types=1);
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 
-$this->title = 'Create a new account';
-$this->params['breadcrumbs'][] = $this->title;
-$this->params['meta_description'] = 'Create a new account to start building with Yii2.';
-$this->params['meta_keywords'] = 'yii, yii2, signup, register, create account';
-$htmlIcon = <<<HTML
-{label}<div class="input-group"><span class="input-group-text" aria-hidden="true">%s</span>{input}</div>{error}{hint}
-HTML;
-$labelOptions = ['class' => 'form-label fw-semibold small'];
+$this->title = 'Criar conta';
+$this->params['fullWidth'] = true;
+$this->params['meta_description'] = 'Cria a tua conta ShoeStore.';
 ?>
-<div class="site-signup d-flex align-items-center justify-content-center py-5">
-    <div class="card border-0 overflow-hidden login-split-card">
-        <div class="row g-0">
+<section class="auth-wrap site-signup">
+    <div class="auth-card">
+        <h1 class="h3 fw-bold mb-1">Criar conta</h1>
+        <p class="text-secondary mb-4">Preenche os campos para começares a comprar.</p>
 
-            <!-- Brand panel -->
-            <div class="col-md-5 d-none d-md-flex login-brand-panel text-white">
-                <div class="d-flex flex-column justify-content-between p-4 p-lg-5 w-100">
-                    <div>
-                        <?= Html::img(
-                            Yii::getAlias('@web/images/yii3_full_white_for_dark.svg'),
-                            [
-                                'alt' => 'Yii Framework',
-                                'class' => 'mb-4',
-                                'height' => 40,
-                            ],
-                        ) ?>
-                    </div>
-                    <div>
-                        <h2 class="fw-bold mb-3 login-brand-title">
-                            Create Your<br>Account
-                        </h2>
-                        <p class="opacity-75 mb-0 login-brand-text">
-                            Join us and start building amazing applications with Yii2.
-                        </p>
-                    </div>
-                </div>
-            </div>
+        <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
 
-            <!-- Form panel -->
-            <div class="col-md-7">
-                <div class="p-4 p-lg-5">
-                    <div class="text-center mb-4">
-                        <div class="d-md-none mb-3">
-                            <?= Html::img(
-                                Yii::getAlias('@web/images/yii3_full_black_for_light.svg'),
-                                [
-                                    'alt' => 'Yii Framework',
-                                    'class' => 'login-mobile-logo',
-                                    'height' => 36,
-                                ],
-                            ) ?>
-                        </div>
-                        <h1 class="h3 fw-bold mb-1"><?= Html::encode($this->title) ?></h1>
-                        <p class="text-body-secondary small">Fill out the fields below to get started</p>
-                    </div>
+        <?= $form->field($model, 'username')->textInput(['autofocus' => true, 'autocomplete' => 'username']) ?>
 
-                    <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
+        <?= $form->field($model, 'email')->textInput(['autocomplete' => 'email']) ?>
 
-                    <div class="mb-3">
-                        <?= $form->field($model, 'username', [
-                            'options' => ['class' => 'mb-0'],
-                            'template' => sprintf($htmlIcon, '&#128100;'),
-                            'inputOptions' => [
-                                'autofocus' => true,
-                                'class' => 'form-control',
-                                'placeholder' => 'username',
-                            ],
-                        ])->textInput()->label('Your Username', $labelOptions) ?>
-                    </div>
+        <?= $form->field($model, 'password')
+            ->passwordInput(['autocomplete' => 'new-password'])
+            ->hint('Mínimo de ' . Yii::$app->params['user.passwordMinLength'] . ' caracteres.') ?>
 
-                    <div class="mb-3">
-                        <?= $form->field($model, 'email', [
-                            'options' => ['class' => 'mb-0'],
-                            'template' => sprintf($htmlIcon, '&#9993;'),
-                            'inputOptions' => [
-                                'class' => 'form-control',
-                                'placeholder' => 'email@example.com',
-                            ],
-                        ])->textInput()->label('Your Email', $labelOptions) ?>
-                    </div>
-
-                    <div class="mb-4">
-                        <?= $form->field($model, 'password', [
-                            'options' => ['class' => 'mb-0'],
-                            'template' => sprintf($htmlIcon, '&#128274;'),
-                            'inputOptions' => [
-                                'class' => 'form-control',
-                                'placeholder' => 'Password',
-                            ],
-                        ])->passwordInput()->label('Your Password', $labelOptions) ?>
-                    </div>
-
-                    <div class="d-grid">
-                        <?= Html::submitButton(
-                            'Signup',
-                            [
-                                'class' => 'btn login-btn btn-lg rounded-3 text-white',
-                                'name' => 'signup-button',
-                            ],
-                        ) ?>
-                    </div>
-
-                    <?php ActiveForm::end(); ?>
-
-                    <div class="text-body-secondary text-center mt-3 small">
-                        Already have an account? <?= Html::a('Login', ['site/login']) ?>
-                    </div>
-
-                </div>
-            </div>
-
+        <div class="d-grid mt-3">
+            <?= Html::submitButton('Criar conta', ['class' => 'btn btn-shoe btn-lg', 'name' => 'signup-button']) ?>
         </div>
+
+        <?php ActiveForm::end(); ?>
+
+        <p class="text-center text-secondary small mt-4 mb-0">
+            Já tens conta? <?= Html::a('Entrar', ['/site/login']) ?>
+        </p>
     </div>
-</div>
+</section>

@@ -1,0 +1,298 @@
+/* ShoeStore - front-office: tema escuro com laranja (corre por cima do site.css) */
+:root {
+    --shoe-accent: #fa5400;
+    --shoe-accent-dark: #d84800;
+    --shoe-dark: #111111;
+}
+
+[data-bs-theme="dark"] {
+    --bs-body-bg: #111111;
+    --bs-body-bg-rgb: 17, 17, 17;
+    --bs-link-color: #ff8a4d;
+    --bs-link-color-rgb: 255, 138, 77;
+    --bs-link-hover-color: #fa5400;
+    --bs-link-hover-color-rgb: 250, 84, 0;
+}
+
+/* botoes: o primario passa a laranja */
+.btn-primary,
+.btn-shoe {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--shoe-accent);
+    --bs-btn-border-color: var(--shoe-accent);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--shoe-accent-dark);
+    --bs-btn-hover-border-color: var(--shoe-accent-dark);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--shoe-accent-dark);
+    --bs-btn-active-border-color: var(--shoe-accent-dark);
+}
+
+/* a pagina nao tem a barra fixa do template: tira o espaco de cima */
+main > .container {
+    padding-top: 2rem;
+}
+
+/* titulos grandes em maiusculas condensadas */
+.shop-display {
+    font-family: 'Anton', Impact, 'Arial Narrow', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .01em;
+    line-height: 1;
+}
+
+/* barra fina de cima */
+.shop-utility {
+    background: #1a1a1a;
+    font-size: .75rem;
+    padding: .35rem 0;
+}
+.shop-utility a,
+.shop-utility span {
+    color: rgba(255, 255, 255, .7);
+    text-decoration: none;
+}
+.shop-utility a:hover {
+    color: #fff;
+}
+
+/* barra principal */
+.shop-header {
+    background: var(--shoe-dark);
+    border-bottom: 1px solid #2a2a2a;
+}
+.shop-logo {
+    font-weight: 800;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration: none;
+}
+.shop-logo i {
+    color: var(--shoe-accent);
+    margin-right: .5rem;
+}
+.shop-nav {
+    padding: .6rem 0;
+}
+.shop-nav .nav-link {
+    color: #fff;
+    font-weight: 500;
+    padding: .4rem .8rem;
+}
+.shop-nav .nav-link:hover {
+    color: var(--shoe-accent);
+}
+.shop-icon-btn {
+    color: #fff;
+    background: none;
+    border: 0;
+    font-size: 1.1rem;
+    padding: .3rem .5rem;
+    line-height: 1;
+}
+.shop-icon-btn:hover {
+    color: var(--shoe-accent);
+}
+.shop-search {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    background: #262626;
+    border-radius: 999px;
+    padding: .3rem .9rem;
+    color: #999;
+}
+.shop-search input {
+    background: none;
+    border: 0;
+    color: #fff;
+    outline: none;
+    width: 8rem;
+    font-size: .85rem;
+}
+
+/* menu lateral */
+.shop-drawer {
+    background: #161616;
+    border-right: 1px solid #2a2a2a;
+    width: 320px;
+}
+.shop-drawer .offcanvas-header {
+    border-bottom: 1px solid #2a2a2a;
+}
+.shop-drawer-title {
+    margin: 1.4rem 0 .3rem;
+    color: var(--shoe-accent);
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+}
+.shop-drawer-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .55rem 0;
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid #222;
+}
+.shop-drawer-link:hover {
+    color: var(--shoe-accent);
+}
+.shop-badge {
+    background: var(--shoe-accent);
+    color: #fff;
+    border-radius: 999px;
+    font-size: .7rem;
+    padding: .1rem .5rem;
+}
+
+/* hero da pagina inicial */
+.shop-hero {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    padding: 4rem 0;
+    background:
+            radial-gradient(ellipse at 50% 130%, #f55a0f 0%, rgba(250, 84, 0, 0) 65%),
+            #161616;
+}
+.shop-eyebrow {
+    color: var(--shoe-accent);
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+}
+.shop-hero h1 {
+    font-size: clamp(2.6rem, 8vw, 5.5rem);
+    margin-bottom: 1.5rem;
+}
+.shop-pill {
+    border-radius: 999px;
+    padding: .5rem 1.4rem;
+    font-weight: 600;
+}
+
+/* cartoes grandes com botao em pilula */
+.shop-tile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 340px;
+    border-radius: 8px;
+    background: linear-gradient(160deg, #262626 40%, #3a1d0d);
+    color: var(--shoe-accent);
+    font-size: 5rem;
+    text-decoration: none;
+    overflow: hidden;
+}
+.shop-tile .btn {
+    position: absolute;
+    left: 1.2rem;
+    bottom: 1.2rem;
+    font-size: .9rem;
+}
+
+/* faixa grande a meio da pagina */
+.shop-banner {
+    padding: 5rem 0;
+    background:
+            radial-gradient(ellipse at 0% 50%, rgba(250, 84, 0, .45) 0%, rgba(250, 84, 0, 0) 60%),
+            #1b1b1b;
+}
+.shop-banner h2 {
+    font-size: clamp(2rem, 6vw, 4rem);
+}
+.shop-banner p {
+    color: rgba(255, 255, 255, .7);
+}
+
+/* titulo de seccao */
+.shop-section-title {
+    text-align: center;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    margin-bottom: 2rem;
+}
+
+/* cartoes de produto */
+.product-card {
+    background: #1d1d1d;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform .15s, border-color .15s;
+}
+.product-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--shoe-accent);
+}
+.product-img {
+    height: 170px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #262626;
+    color: var(--shoe-accent);
+    font-size: 3.2rem;
+}
+.product-price {
+    color: var(--shoe-accent);
+    font-weight: 600;
+}
+
+/* rodape */
+.shop-footer {
+    background: #0b0b0b;
+    border-top: 1px solid #2a2a2a;
+}
+.shop-footer a {
+    color: rgba(255, 255, 255, .65);
+    text-decoration: none;
+}
+.shop-footer a:hover {
+    color: #fff;
+}
+.shop-footer h3 {
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-bottom: .8rem;
+}
+
+/* paginas de login, registo e contactos */
+.auth-wrap {
+    padding: 4rem 0;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 50% 0%, rgba(250, 84, 0, .28) 0%, rgba(250, 84, 0, 0) 60%);
+}
+.auth-card {
+    width: 100%;
+    max-width: 430px;
+    margin: 0 1rem;
+    padding: 2rem;
+    background: #1d1d1d;
+    border: 1px solid #2a2a2a;
+    border-radius: 14px;
+}
+.auth-card-wide {
+    max-width: 640px;
+}
+.auth-card .form-control:focus {
+    border-color: var(--shoe-accent);
+    box-shadow: 0 0 0 .2rem rgba(250, 84, 0, .25);
+}
+.auth-card .form-check-input:checked {
+    background-color: var(--shoe-accent);
+    border-color: var(--shoe-accent);
+}
