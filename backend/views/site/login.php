@@ -34,24 +34,29 @@ $this->title = 'Entrar';
             ]); ?>
 
             <?php
-            //se o campo tem erro, mostra um icone; a mensagem aparece num balao ao passar o rato
-            $icone = static fn(string $campo): string => $model->hasErrors($campo)
+            //se o campo tem erro, mostra um icone com um balao ao passar o rato
+            //(a mensagem do erro continua a aparecer por baixo do campo)
+            $icone = static fn(string $campo, string $dica): string => $model->hasErrors($campo)
                 ? Html::tag('span', '<i class="fas fa-exclamation-circle"></i>', [
                     'class' => 'shoe-field-alert',
                     'tabindex' => 0,
-                    'data-tip' => $model->getFirstError($campo),
+                    'data-tip' => $dica,
                 ])
                 : '';
             ?>
 
             <?= $form->field($model, 'username', [
-                'template' => "{label}\n<div class=\"shoe-field\">{input}" . $icone('username') . "</div>",
+                'template' => "{label}\n<div class=\"shoe-field\">{input}"
+                    . $icone('username', 'Somente gestores ou administradores podem entrar.')
+                    . "</div>\n{error}",
             ])
                 ->textInput(['autofocus' => true, 'autocomplete' => 'off'])
                 ->label('Nome de utilizador') ?>
 
             <?= $form->field($model, 'password', [
-                'template' => "{label}\n<div class=\"shoe-field\">{input}" . $icone('password') . "</div>",
+                'template' => "{label}\n<div class=\"shoe-field\">{input}"
+                    . $icone('password', 'Confirma o nome de utilizador e a password.')
+                    . "</div>\n{error}",
             ])
                 ->passwordInput(['autocomplete' => 'new-password'])
                 ->label('Password') ?>

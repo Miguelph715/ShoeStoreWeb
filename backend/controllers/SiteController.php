@@ -94,7 +94,7 @@ class SiteController extends Controller
             }
             //a password estava certa, mas e so cliente: fecha a sessao e mostra o erro
             Yii::$app->user->logout();
-            $model->addError('username', 'Somente gestores ou administradores podem entrar.');
+            $model->addError('username', 'Não tens acesso ao back-office.');
         }
 
         $model->password = '';
