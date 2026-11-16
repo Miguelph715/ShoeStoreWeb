@@ -464,3 +464,18 @@ main > .container {
     --bs-pagination-active-border-color: var(--shoe-accent);
     --bs-pagination-disabled-bg: #161616;
 }
+/* contagem de stock */
+.stock-low {
+    color: #f5a623;
+}
+.stock-out {
+    color: #ff6b6b;
+}
+.size-stock {
+    font-size: .65rem;
+    line-height: 1;
+    margin-top: .15rem;
+}
+.btn-check:checked + .size-pill .size-stock {
+    color: #fff;
+}

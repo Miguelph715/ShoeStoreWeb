@@ -94,7 +94,7 @@ class SiteController extends Controller
     {
         //os 4 produtos ativos mais recentes, para a montra da pagina inicial
         $produtos = Produto::find()
-            ->with('marca')
+            ->with(['marca', 'produtoTamanhos'])
             ->where(['ativo' => 1])
             ->orderBy(['id' => SORT_DESC])
             ->limit(4)

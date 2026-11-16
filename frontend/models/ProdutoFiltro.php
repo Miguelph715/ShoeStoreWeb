@@ -88,6 +88,7 @@ class ProdutoFiltro extends Model
         $query = Produto::find()
             ->alias('p')
             ->joinWith(['marca m', 'categoria c'], true, 'INNER JOIN')
+            ->with('produtoTamanhos')
             ->where(['p.ativo' => 1]);
 
         if (!empty($this->q)) {

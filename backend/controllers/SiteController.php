@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace backend\controllers;
 
+use common\models\Encomenda;
 use common\models\LoginForm;
+use common\models\Produto;
 use Yii;
 use yii\filters\AccessControl;
+use yii\db\Expression;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\ErrorAction;
@@ -70,7 +73,33 @@ class SiteController extends Controller
      */
     public function actionIndex(): string
     {
-        return $this->render('index');
+        $db = Yii::$app->db;
+        //o stock total de cada produto ativo (soma dos tamanhos)
+        $stockPorProduto = '(SELECT COALESCE(SUM(pt.stock), 0) FROM {{%produto_tamanho}} pt WHERE pt.produto_id = p.id)';
+
+        $estatisticas = [
+            'produtos' => (int) $db->createCommand('SELECT COUNT(*) FROM {{%produto}} WHERE ativo = 1')->queryScalar(),
+            'esgotados' => (int) $db->createCommand("SELECT COUNT(*) FROM {{%produto}} p WHERE p.ativo = 1 AND $stockPorProduto = 0")->queryScalar(),
+            'stockBaixo' => (int) $db->createCommand("SELECT COUNT(*) FROM {{%produto}} p WHERE p.ativo = 1 AND $stockPorProduto BETWEEN 1 AND 5")->queryScalar(),
+            'pendentes' => (int) $db->createCommand("SELECT COUNT(*) FROM {{%encomenda}} WHERE estado = 'Pendente'")->queryScalar(),
+            'encomendas' => (int) $db->createCommand('SELECT COUNT(*) FROM {{%encomenda}}')->queryScalar(),
+            'vendas' => (float) $db->createCommand("SELECT COALESCE(SUM(total), 0) FROM {{%encomenda}} WHERE estado <> 'Cancelada'")->queryScalar(),
+            'clientes' => (int) $db->createCommand("SELECT COUNT(*) FROM {{%auth_assignment}} WHERE item_name = 'cliente'")->queryScalar(),
+        ];
+
+        return $this->render('index', [
+            'estatisticas' => $estatisticas,
+            'ultimas' => Encomenda::find()->with('user')->orderBy(['id' => SORT_DESC])->limit(5)->all(),
+            //os produtos com menos stock (so os ativos), para repor
+            'poucoStock' => Produto::find()
+                ->alias('p')
+                ->where(['p.ativo' => 1])
+                ->andWhere(new Expression("$stockPorProduto <= 5"))
+                ->orderBy(new Expression("$stockPorProduto ASC, p.nome ASC"))
+                ->with('produtoTamanhos')
+                ->limit(6)
+                ->all(),
+        ]);
     }
 
     /**

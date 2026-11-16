@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace frontend\controllers;
 
+use common\components\Encomendas;
 use common\models\Encomenda;
 use common\models\Perfil;
 use frontend\components\Cart;
@@ -113,24 +114,11 @@ class EncomendaController extends Controller
             return $this->redirect(['view', 'id' => $id]);
         }
 
-        $db = Yii::$app->db;
-        $transacao = $db->beginTransaction();
-        try {
-            foreach ($encomenda->linhaEncomendas as $l) {
-                $db->createCommand(
-                    'UPDATE {{%produto_tamanho}} SET stock = stock + :q WHERE produto_id = :p AND tamanho_id = :t',
-                    [':q' => $l->quantidade, ':p' => $l->produto_id, ':t' => $l->tamanho_id]
-                )->execute();
-            }
-            $encomenda->estado = 'Cancelada';
-            $encomenda->updated_at = time();
-            if (!$encomenda->save(false, ['estado', 'updated_at'])) {
-                throw new \RuntimeException('Não foi possível cancelar.');
-            }
-            $transacao->commit();
+        //as regras (e a devolucao do stock) estao em common\components\Encomendas
+        $erro = Encomendas::mudarEstado($encomenda, 'Cancelada');
+        if ($erro === null) {
             Yii::$app->session->setFlash('success', 'Encomenda #' . $id . ' cancelada.');
-        } catch (\Throwable $e) {
-            $transacao->rollBack();
+        } else {
             Yii::$app->session->setFlash('error', 'Não foi possível cancelar a encomenda.');
         }
 

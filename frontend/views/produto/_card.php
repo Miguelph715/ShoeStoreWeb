@@ -13,6 +13,7 @@ use yii\helpers\Url;
 $url = Url::to(['/produto/view', 'id' => $p->id]);
 $emPromocao = Loja::emPromocao($p);
 $favorito = in_array($p->id, $favoritos ?? [], true);
+$stock = Loja::stockTotal($p);
 ?>
 <div class="product-card h-100 position-relative">
     <a class="product-img" href="<?= $url ?>" aria-label="Ver <?= Html::encode($p->nome) ?>">
@@ -38,5 +39,10 @@ $favorito = in_array($p->id, $favoritos ?? [], true);
                 <span class="product-old-price"><?= Loja::euros((float) $p->preco) ?></span>
             <?php endif ?>
         </div>
+        <?php if ($stock === 0): ?>
+            <div class="small stock-out">Esgotado</div>
+        <?php elseif ($stock <= 5): ?>
+            <div class="small stock-low">Últimas unidades (<?= $stock ?>)</div>
+        <?php endif ?>
     </div>
 </div>

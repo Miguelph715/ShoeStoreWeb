@@ -20,7 +20,8 @@ $convidado = Yii::$app->user->isGuest;
 $emPromocao = Loja::emPromocao($produto);
 $favorito = in_array($produto->id, $favoritos, true);
 $generos = ['homem' => 'Homem', 'mulher' => 'Mulher', 'crianca' => 'Criança', 'unissexo' => 'Unissexo'];
-$temStock = array_sum(array_map(fn($t) => (int) $t->stock, $tamanhos)) > 0;
+$stockTotal = Loja::stockTotal($produto);
+$temStock = $stockTotal > 0;
 ?>
 <div class="site-produto">
     <div class="row g-4 g-lg-5">
@@ -66,10 +67,13 @@ $temStock = array_sum(array_map(fn($t) => (int) $t->stock, $tamanhos)) > 0;
                             <label class="btn btn-outline-light size-pill" for="t<?= $pt->tamanho_id ?>"
                                    title="<?= $esgotado ? 'Esgotado' : ((int) $pt->stock) . ' em stock' ?>">
                                 <?= Html::encode(rtrim(rtrim(number_format((float) $pt->tamanho->numero, 1, '.', ''), '0'), '.')) ?>
+                                <small class="d-block size-stock <?= $esgotado ? 'stock-out' : ((int) $pt->stock <= 3 ? 'stock-low' : '') ?>"><?= $esgotado ? 'esgotado' : (int) $pt->stock . ' un.' ?></small>
                             </label>
                         <?php endforeach ?>
                     </div>
-                    <div class="small text-secondary mt-2">Os tamanhos riscados estão esgotados.</div>
+                    <div class="small mt-2 <?= $temStock ? 'text-secondary' : 'stock-out' ?>">
+                        <?= $temStock ? 'Em stock: ' . $stockTotal . ' ' . ($stockTotal === 1 ? 'par' : 'pares') . ' (os tamanhos riscados estão esgotados).' : 'Produto esgotado.' ?>
+                    </div>
                 </div>
 
                 <!-- Cores -->

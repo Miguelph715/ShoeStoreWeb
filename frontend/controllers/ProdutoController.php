@@ -49,7 +49,7 @@ class ProdutoController extends Controller
         usort($tamanhos, fn($a, $b) => (float) $a->tamanho->numero <=> (float) $b->tamanho->numero);
 
         $parecidos = Produto::find()
-            ->with('marca')
+            ->with(['marca', 'produtoTamanhos'])
             ->where(['categoria_id' => $produto->categoria_id, 'ativo' => 1])
             ->andWhere(['<>', 'id', $produto->id])
             ->orderBy(['id' => SORT_DESC])

@@ -30,6 +30,16 @@ $roles = array_keys(Yii::$app->authManager->getRolesByUser((int) Yii::$app->user
                 ['label' => 'Painel', 'icon' => 'tachometer-alt', 'url' => ['/site/index']],
             ];
 
+            //o catalogo e as vendas: gestor e admin
+            if (Yii::$app->user->can('gerirProdutos')) {
+                $itens[] = ['label' => 'Catálogo', 'header' => true];
+                $itens[] = ['label' => 'Produtos', 'icon' => 'shoe-prints', 'url' => ['/produto/index']];
+            }
+            if (Yii::$app->user->can('gerirEncomendas')) {
+                $itens[] = ['label' => 'Vendas', 'header' => true];
+                $itens[] = ['label' => 'Encomendas', 'icon' => 'box-open', 'url' => ['/encomenda/index']];
+            }
+
             //so aparece a quem tem a permissao (o admin)
             if (Yii::$app->user->can('gerirUtilizadores')) {
                 $itens[] = ['label' => 'Administração', 'header' => true];

@@ -44,7 +44,7 @@ class FavoritoController extends Controller
     {
         $produtos = Produto::find()
             ->alias('p')
-            ->with('marca')
+            ->with(['marca', 'produtoTamanhos'])
             ->innerJoin('{{%favorito}} f', 'f.produto_id = p.id')
             ->where(['f.user_id' => Yii::$app->user->id, 'p.ativo' => 1])
             ->orderBy(['f.id' => SORT_DESC])

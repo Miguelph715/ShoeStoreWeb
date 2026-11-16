@@ -46,6 +46,14 @@ class Loja
         return $p->preco_promocional !== null ? (float) $p->preco_promocional : (float) $p->preco;
     }
 
+    /**
+     * O stock total do produto (a soma dos tamanhos). Precisa do produto com os tamanhos carregados.
+     */
+    public static function stockTotal(Produto $p): int
+    {
+        return (int) array_sum(array_map(fn($t) => (int) $t->stock, $p->produtoTamanhos));
+    }
+
     public static function emPromocao(Produto $p): bool
     {
         return $p->preco_promocional !== null;
