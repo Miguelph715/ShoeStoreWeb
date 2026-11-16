@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace frontend\controllers;
 
 use common\models\LoginForm;
+use common\models\Produto;
+use frontend\components\Loja;
 use frontend\models\ContactForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResendVerificationEmailForm;
@@ -21,7 +23,6 @@ use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\ErrorAction;
 use yii\web\Response;
-use yii\db\Query;
 
 /**
  * Site controller
@@ -92,20 +93,18 @@ class SiteController extends Controller
     public function actionIndex(): string
     {
         //os 4 produtos ativos mais recentes, para a montra da pagina inicial
-        $produtos = (new Query())
-            ->select(['p.id', 'p.nome', 'p.preco', 'p.imagem', 'marca' => 'm.nome'])
-            ->from(['p' => 'produto'])
-            ->innerJoin(['m' => 'marca'], 'm.id = p.marca_id')
-            ->where(['p.ativo' => 1])
-            ->orderBy(['p.id' => SORT_DESC])
+        $produtos = Produto::find()
+            ->with('marca')
+            ->where(['ativo' => 1])
+            ->orderBy(['id' => SORT_DESC])
             ->limit(4)
             ->all();
 
         return $this->render('index', [
             'produtos' => $produtos,
+            'favoritos' => Loja::favoritosDoUtilizador(),
         ]);
     }
-
     /**
      * Logs in a user.
      *

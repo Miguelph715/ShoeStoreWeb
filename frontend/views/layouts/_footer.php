@@ -16,10 +16,12 @@ use yii\helpers\Html;
             <div class="col-6 col-md-2">
                 <h3>Loja</h3>
                 <ul class="list-unstyled mb-0 small">
-                    <li class="mb-2"><a href="#">Novidades</a></li>
-                    <li class="mb-2"><a href="#">Homem</a></li>
-                    <li class="mb-2"><a href="#">Mulher</a></li>
-                    <li class="mb-2"><a href="#">Criança</a></li>
+                    <li class="mb-2"><?= Html::a('Novidades', ['/produto/index', 'novidades' => 1]) ?></li>
+                    <li class="mb-2"><?= Html::a('Homem', ['/produto/index', 'genero' => 'homem']) ?></li>
+                    <li class="mb-2"><?= Html::a('Mulher', ['/produto/index', 'genero' => 'mulher']) ?></li>
+                    <li class="mb-2"><?= Html::a('Criança', ['/produto/index', 'genero' => 'crianca']) ?></li>
+                    <li class="mb-2"><?= Html::a('Promoções', ['/produto/index', 'promocao' => 1]) ?></li>
+                    <li class="mb-2"><?= Html::a('Marcas', ['/produto/marcas']) ?></li>
                 </ul>
             </div>
             <div class="col-6 col-md-3">
@@ -36,6 +38,9 @@ use yii\helpers\Html;
                         <li class="mb-2"><?= Html::a('Entrar', ['/site/login']) ?></li>
                         <li class="mb-2"><?= Html::a('Criar conta', ['/site/signup']) ?></li>
                     <?php else: ?>
+                        <li class="mb-2"><?= Html::a('O meu perfil', ['/perfil/index']) ?></li>
+                        <li class="mb-2"><?= Html::a('As minhas encomendas', ['/encomenda/index']) ?></li>
+                        <li class="mb-2"><?= Html::a('Favoritos', ['/favorito/index']) ?></li>
                         <li class="mb-2"><?= Html::a('Sair', ['/site/logout'], ['data-method' => 'post']) ?></li>
                     <?php endif ?>
                 </ul>
