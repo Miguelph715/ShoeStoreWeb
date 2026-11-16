@@ -80,7 +80,8 @@ class SeedController extends Controller
                 ['Chinelos', 'Chinelos e sandálias'],
             ];
             $db->createCommand()->batchInsert('{{%categoria}}', ['nome', 'descricao'], $categorias)->execute();
-            $tamanhos = range(35, 47);
+            //28 a 34 sao tamanhos de crianca
+            $tamanhos = range(28, 47);
             $db->createCommand()->batchInsert('{{%tamanho}}', ['numero'], array_map(fn($n) => [$n], $tamanhos))->execute();
             $db->createCommand()->batchInsert('{{%metodo_pagamento}}', ['nome'], [['MB Way'], ['Multibanco'], ['Cartão de crédito']])->execute();
             //cores: nome e codigo hexadecimal
@@ -99,24 +100,32 @@ class SeedController extends Controller
                 $idTamanho[(int) $t['numero']] = (int) $t['id'];
             }
 
-            //marca, categoria, nome, descricao, preco, tamanho minimo, tamanho maximo
+            //marca, categoria, nome, descricao, preco, tamanho minimo, tamanho maximo, genero, uso, preco promocional (null = sem promocao)
             $produtos = [
-                ['Nike', 'Ténis', 'Nike Air Max 90', 'Ténis clássico com a icónica unidade de ar visível no calcanhar.', 139.99, 38, 46],
-                ['Nike', 'Ténis', "Nike Air Force 1 '07", 'Ténis de cabedal com sola de amortecimento Air.', 119.99, 38, 47],
-                ['Nike', 'Ténis', 'Nike Pegasus 40', 'Ténis de corrida versáteis, leves e com boa resposta.', 129.99, 38, 46],
-                ['Nike', 'Chinelos', 'Nike Victori One Slide', 'Chinelo de espuma macia, ideal para depois do treino.', 29.99, 36, 47],
-                ['Adidas', 'Ténis', 'Adidas Ultraboost Light', 'Ténis de corrida com amortecimento Boost.', 189.99, 38, 46],
-                ['Adidas', 'Ténis', 'Adidas Superstar', 'Ténis de cabedal com a famosa biqueira de concha.', 99.99, 36, 46],
-                ['Adidas', 'Ténis', 'Adidas Stan Smith', 'Ténis minimalistas de cabedal branco com detalhes verdes.', 99.99, 36, 46],
-                ['Adidas', 'Chinelos', 'Adidas Adilette Shower', 'Chinelo leve e de secagem rápida.', 29.99, 36, 47],
-                ['New Balance', 'Ténis', 'New Balance 574', 'Ténis retro, confortáveis e versáteis.', 109.99, 36, 46],
-                ['New Balance', 'Ténis', 'New Balance 530', 'Ténis de inspiração running dos anos 2000.', 119.99, 36, 46],
-                ['Puma', 'Ténis', 'Puma Suede Classic', 'Ténis de camurça com a forma clássica.', 79.99, 36, 46],
-                ['Puma', 'Ténis', 'Puma RS-X', 'Ténis volumosos com estilo retro-futurista.', 119.99, 38, 46],
-                ['Converse', 'Ténis', 'Converse Chuck Taylor All Star', 'O ténis de lona de cano alto que nunca passa de moda.', 74.99, 36, 46],
-                ['Timberland', 'Botas', 'Timberland 6-Inch Premium', 'Bota de cabedal impermeável, cosida à mão.', 229.99, 39, 46],
-                ['Clarks', 'Botas', 'Clarks Desert Boot', 'Bota de camurça com sola de crepe.', 134.99, 39, 46],
-                ['Clarks', 'Formais', 'Clarks Oxford Clássico', 'Sapato Oxford de cabedal para ocasiões formais.', 119.99, 40, 45],
+                ['Nike', 'Ténis', 'Nike Air Max 90', 'Ténis clássico com a icónica unidade de ar visível no calcanhar.', 139.99, 38, 46, 'homem', 'estilo', null],
+                ['Nike', 'Ténis', "Nike Air Force 1 '07", 'Ténis de cabedal com sola de amortecimento Air.', 119.99, 38, 47, 'unissexo', 'estilo', 99.99],
+                ['Nike', 'Ténis', 'Nike Pegasus 40', 'Ténis de corrida versáteis, leves e com boa resposta.', 129.99, 38, 46, 'homem', 'desporto', null],
+                ['Nike', 'Chinelos', 'Nike Victori One Slide', 'Chinelo de espuma macia, ideal para depois do treino.', 29.99, 36, 47, 'unissexo', 'desporto', null],
+                ['Adidas', 'Ténis', 'Adidas Ultraboost Light', 'Ténis de corrida com amortecimento Boost.', 189.99, 38, 46, 'mulher', 'desporto', 149.99],
+                ['Adidas', 'Ténis', 'Adidas Superstar', 'Ténis de cabedal com a famosa biqueira de concha.', 99.99, 36, 46, 'unissexo', 'estilo', null],
+                ['Adidas', 'Ténis', 'Adidas Stan Smith', 'Ténis minimalistas de cabedal branco com detalhes verdes.', 99.99, 36, 46, 'unissexo', 'estilo', null],
+                ['Adidas', 'Chinelos', 'Adidas Adilette Shower', 'Chinelo leve e de secagem rápida.', 29.99, 36, 47, 'unissexo', 'desporto', null],
+                ['New Balance', 'Ténis', 'New Balance 574', 'Ténis retro, confortáveis e versáteis.', 109.99, 36, 46, 'homem', 'estilo', 89.99],
+                ['New Balance', 'Ténis', 'New Balance 530', 'Ténis de inspiração running dos anos 2000.', 119.99, 36, 46, 'mulher', 'estilo', null],
+                ['Puma', 'Ténis', 'Puma Suede Classic', 'Ténis de camurça com a forma clássica.', 79.99, 36, 46, 'mulher', 'estilo', 59.99],
+                ['Puma', 'Ténis', 'Puma RS-X', 'Ténis volumosos com estilo retro-futurista.', 119.99, 38, 46, 'homem', 'estilo', null],
+                ['Converse', 'Ténis', 'Converse Chuck Taylor All Star', 'O ténis de lona de cano alto que nunca passa de moda.', 74.99, 36, 46, 'unissexo', 'estilo', null],
+                ['Timberland', 'Botas', 'Timberland 6-Inch Premium', 'Bota de cabedal impermeável, cosida à mão.', 229.99, 39, 46, 'homem', 'estilo', null],
+                ['Clarks', 'Botas', 'Clarks Desert Boot', 'Bota de camurça com sola de crepe.', 134.99, 39, 46, 'homem', 'formal', null],
+                ['Clarks', 'Formais', 'Clarks Oxford Clássico', 'Sapato Oxford de cabedal para ocasiões formais.', 119.99, 40, 45, 'homem', 'formal', null],
+                ['Nike', 'Ténis', 'Nike Star Runner Júnior', 'Ténis de corrida leves para os mais novos.', 49.99, 28, 35, 'crianca', 'desporto', null],
+                ['Adidas', 'Ténis', 'Adidas Grand Court Júnior', 'Ténis clássicos com fecho de velcro.', 44.99, 28, 35, 'crianca', 'estilo', null],
+                ['New Balance', 'Ténis', 'New Balance 574 Júnior', 'O clássico 574 em tamanho de criança.', 54.99, 28, 35, 'crianca', 'estilo', 44.99],
+                ['Puma', 'Ténis', 'Puma Smash Júnior', 'Ténis resistentes para o recreio e para o desporto escolar.', 39.99, 28, 35, 'crianca', 'desporto', null],
+                ['Clarks', 'Formais', 'Clarks Mary Jane Clássica', 'Sapato de cabedal com tira, para ocasiões especiais.', 109.99, 35, 41, 'mulher', 'formal', null],
+                ['Nike', 'Ténis', 'Nike Air Max Dawn', 'Ténis com amortecimento Air e linhas modernas.', 119.99, 35, 41, 'mulher', 'estilo', 99.99],
+                ['Adidas', 'Ténis', 'Adidas Samba OG', 'Ténis de futsal clássicos, agora de uso diário.', 109.99, 36, 46, 'unissexo', 'estilo', null],
+                ['Puma', 'Ténis', 'Puma Cali Dream', 'Ténis de plataforma com estilo californiano.', 89.99, 35, 41, 'mulher', 'estilo', null],
             ];
             //cores disponiveis de cada produto
             $coresDoProduto = [
@@ -136,14 +145,23 @@ class SeedController extends Controller
                 'Timberland 6-Inch Premium' => ['Castanho', 'Preto'],
                 'Clarks Desert Boot' => ['Castanho', 'Bege', 'Preto'],
                 'Clarks Oxford Clássico' => ['Preto', 'Castanho'],
+                'Nike Star Runner Júnior' => ['Azul', 'Preto', 'Vermelho'],
+                'Adidas Grand Court Júnior' => ['Branco', 'Azul'],
+                'New Balance 574 Júnior' => ['Cinzento', 'Azul'],
+                'Puma Smash Júnior' => ['Preto', 'Branco', 'Vermelho'],
+                'Clarks Mary Jane Clássica' => ['Preto', 'Castanho'],
+                'Nike Air Max Dawn' => ['Branco', 'Bege', 'Preto'],
+                'Adidas Samba OG' => ['Branco', 'Preto', 'Verde'],
+                'Puma Cali Dream' => ['Branco', 'Bege'],
             ];
             $idCor = array_column($db->createCommand('SELECT nome, id FROM {{%cor}}')->queryAll(), 'id', 'nome');
             //stock "variado" mas sempre igual (alguns tamanhos a 0 para testar "esgotado")
             $stocks = [0, 0, 2, 3, 4, 5, 6, 8, 10, 12];
-            foreach ($produtos as $i => [$marca, $categoria, $nome, $descricao, $preco, $min, $max]) {
+            foreach ($produtos as $i => [$marca, $categoria, $nome, $descricao, $preco, $min, $max, $genero, $uso, $promocao]) {
                 $db->createCommand()->insert('{{%produto}}', [
                     'marca_id' => $idMarca[$marca], 'categoria_id' => $idCategoria[$categoria], 'nome' => $nome,
-                    'descricao' => $descricao, 'preco' => $preco, 'ativo' => 1, 'created_at' => $agora, 'updated_at' => $agora,
+                    'descricao' => $descricao, 'preco' => $preco, 'genero' => $genero, 'uso' => $uso, 'preco_promocional' => $promocao,
+                    'ativo' => 1, 'created_at' => $agora, 'updated_at' => $agora,
                 ])->execute();
                 $idProduto = (int) $db->getLastInsertID();
                 $linhas = [];
@@ -163,7 +181,7 @@ class SeedController extends Controller
             return self::EXIT_CODE_ERROR;
         }
 
-        echo "Dados de teste criados: 6 utilizadores, 7 marcas, 4 categorias, 13 tamanhos, 8 cores, 16 produtos (com stock e cores) e 3 metodos de pagamento.\n";
+        echo "Dados de teste criados: 6 utilizadores, 7 marcas, 4 categorias, 20 tamanhos, 8 cores, 24 produtos (com stock, cores, genero, uso e promocoes) e 3 metodos de pagamento.\n";
         return self::EXIT_CODE_NORMAL;
     }
 }
