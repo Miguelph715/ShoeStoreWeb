@@ -20,16 +20,22 @@ $total = array_sum(array_map(fn($t) => (int) $t->stock, $tamanhos));
 <div class="produto-view">
 
     <p>
-        <?= Html::a('Editar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?php if (Yii::$app->user->can('editarProduto')): ?>
+            <?= Html::a('Editar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?php endif ?>
         <?php if (Yii::$app->user->can('gerirStock')): ?>
             <?= Html::a('Gerir stock', ['stock', 'id' => $model->id], ['class' => 'btn btn-info']) ?>
         <?php endif ?>
-        <?php if ((int) $model->ativo === 1): ?>
-            <?= Html::a('Desativar', ['desativar', 'id' => $model->id], ['class' => 'btn btn-outline-warning', 'data' => ['confirm' => 'Desativar este produto? Deixa de aparecer na loja.', 'method' => 'post']]) ?>
-        <?php else: ?>
-            <?= Html::a('Ativar', ['ativar', 'id' => $model->id], ['class' => 'btn btn-outline-success', 'data' => ['method' => 'post']]) ?>
+        <?php if (Yii::$app->user->can('editarProduto')): ?>
+            <?php if ((int) $model->ativo === 1): ?>
+                <?= Html::a('Desativar', ['desativar', 'id' => $model->id], ['class' => 'btn btn-outline-warning', 'data' => ['confirm' => 'Desativar este produto? Deixa de aparecer na loja.', 'method' => 'post']]) ?>
+            <?php else: ?>
+                <?= Html::a('Ativar', ['ativar', 'id' => $model->id], ['class' => 'btn btn-outline-success', 'data' => ['method' => 'post']]) ?>
+            <?php endif ?>
         <?php endif ?>
-        <?= Html::a('Eliminar', ['delete', 'id' => $model->id], ['class' => 'btn btn-outline-danger', 'data' => ['confirm' => 'Eliminar este produto de vez? Só é possível se nunca foi encomendado.', 'method' => 'post']]) ?>
+        <?php if (Yii::$app->user->can('eliminarProduto')): ?>
+            <?= Html::a('Eliminar', ['delete', 'id' => $model->id], ['class' => 'btn btn-outline-danger', 'data' => ['confirm' => 'Eliminar este produto de vez? Só é possível se nunca foi encomendado.', 'method' => 'post']]) ?>
+        <?php endif ?>
     </p>
 
     <div class="row">

@@ -33,9 +33,12 @@ class ProdutoController extends Controller
                 'access' => [
                     'class' => AccessControl::class,
                     'rules' => [
-                        //o stock tem a sua propria permissao
+                        //uma permissao por operacao
+                        ['allow' => true, 'actions' => ['index', 'view'], 'roles' => ['verProdutos']],
+                        ['allow' => true, 'actions' => ['create'], 'roles' => ['criarProduto']],
+                        ['allow' => true, 'actions' => ['update', 'desativar', 'ativar'], 'roles' => ['editarProduto']],
+                        ['allow' => true, 'actions' => ['delete'], 'roles' => ['eliminarProduto']],
                         ['allow' => true, 'actions' => ['stock'], 'roles' => ['gerirStock']],
-                        ['allow' => true, 'roles' => ['gerirProdutos']],
                     ],
                 ],
                 'verbs' => [

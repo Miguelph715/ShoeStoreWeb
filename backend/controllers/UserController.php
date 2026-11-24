@@ -29,14 +29,14 @@ class UserController extends Controller
         return array_merge(
             parent::behaviors(),
             [
-                //so quem tem a permissao gerirUtilizadores (o admin) entra neste controlador
+                //uma permissao por operacao (so o admin as tem)
                 'access' => [
                     'class' => AccessControl::class,
                     'rules' => [
-                        [
-                            'allow' => true,
-                            'roles' => ['gerirUtilizadores'],
-                        ],
+                        ['allow' => true, 'actions' => ['index', 'view'], 'roles' => ['verUtilizadores']],
+                        ['allow' => true, 'actions' => ['create'], 'roles' => ['criarUtilizador']],
+                        ['allow' => true, 'actions' => ['update'], 'roles' => ['editarUtilizador']],
+                        ['allow' => true, 'actions' => ['delete', 'restore'], 'roles' => ['eliminarUtilizador']],
                     ],
                 ],
                 //eliminar e restaurar alteram dados: so por POST

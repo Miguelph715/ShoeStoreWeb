@@ -18,17 +18,21 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
     <p>
-        <?= Html::a('Editar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?php if ($model->status === User::STATUS_DELETED): ?>
-            <?= Html::a('Restaurar', ['restore', 'id' => $model->id], [
-                'class' => 'btn btn-success',
-                'data' => ['method' => 'post'],
-            ]) ?>
-        <?php else: ?>
-            <?= Html::a('Eliminar', ['delete', 'id' => $model->id], [
-                'class' => 'btn btn-danger',
-                'data' => ['confirm' => 'Eliminar este utilizador? Pode ser restaurado depois.', 'method' => 'post'],
-            ]) ?>
+        <?php if (Yii::$app->user->can('editarUtilizador')): ?>
+            <?= Html::a('Editar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?php endif; ?>
+        <?php if (Yii::$app->user->can('eliminarUtilizador')): ?>
+            <?php if ($model->status === User::STATUS_DELETED): ?>
+                <?= Html::a('Restaurar', ['restore', 'id' => $model->id], [
+                    'class' => 'btn btn-success',
+                    'data' => ['method' => 'post'],
+                ]) ?>
+            <?php else: ?>
+                <?= Html::a('Eliminar', ['delete', 'id' => $model->id], [
+                    'class' => 'btn btn-danger',
+                    'data' => ['confirm' => 'Eliminar este utilizador? Pode ser restaurado depois.', 'method' => 'post'],
+                ]) ?>
+            <?php endif; ?>
         <?php endif; ?>
     </p>
 

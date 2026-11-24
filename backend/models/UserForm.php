@@ -80,7 +80,21 @@ class UserForm extends Model
             ['role', 'in', 'range' => array_keys(self::roleList())],
             ['status', 'in', 'range' => array_keys(User::statusList())],
             ['role', 'validateNaoSeTrancar'],
+            ['status', 'validateEliminar'],
         ];
+    }
+
+    /**
+     * Eliminar ou restaurar pelo formulario tambem pede a permissao eliminarUtilizador.
+     */
+    public function validateEliminar(string $attribute)
+    {
+        $eraEliminado = $this->_user !== null && (int) $this->_user->status === User::STATUS_DELETED;
+        $ficaEliminado = (int) $this->status === User::STATUS_DELETED;
+
+        if ($eraEliminado !== $ficaEliminado && !Yii::$app->user->can('eliminarUtilizador')) {
+            $this->addError($attribute, 'Não tens permissão para eliminar ou restaurar utilizadores.');
+        }
     }
 
     /**

@@ -13,13 +13,17 @@ use yii\helpers\Url;
 
 $this->title = 'Utilizadores';
 $this->params['breadcrumbs'][] = $this->title;
+$podeEditar = Yii::$app->user->can('editarUtilizador');
+$podeEliminar = Yii::$app->user->can('eliminarUtilizador');
 ?>
 <div class="user-index">
 
 
-    <p>
-        <?= Html::a('Criar utilizador', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <?php if (Yii::$app->user->can('criarUtilizador')): ?>
+        <p>
+            <?= Html::a('Criar utilizador', ['create'], ['class' => 'btn btn-success']) ?>
+        </p>
+    <?php endif ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -61,8 +65,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 //Eliminar so aparece em utilizadores nao eliminados; Restaurar so nos eliminados
                 'visibleButtons' => [
-                    'delete' => fn(User $model) => $model->status !== User::STATUS_DELETED,
-                    'restore' => fn(User $model) => $model->status === User::STATUS_DELETED,
+                    'update' => $podeEditar,
+                    'delete' => fn(User $model) => $podeEliminar && $model->status !== User::STATUS_DELETED,
+                    'restore' => fn(User $model) => $podeEliminar && $model->status === User::STATUS_DELETED,
                 ],
             ],
         ],

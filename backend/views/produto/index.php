@@ -18,10 +18,14 @@ use yii\helpers\Url;
 $this->title = 'Produtos';
 $this->params['breadcrumbs'][] = $this->title;
 $podeStock = Yii::$app->user->can('gerirStock');
+$podeEditar = Yii::$app->user->can('editarProduto');
+$podeEliminar = Yii::$app->user->can('eliminarProduto');
 ?>
 <div class="produto-index">
 
-    <p><?= Html::a('Criar produto', ['create'], ['class' => 'btn btn-success']) ?></p>
+    <?php if (Yii::$app->user->can('criarProduto')): ?>
+        <p><?= Html::a('Criar produto', ['create'], ['class' => 'btn btn-success']) ?></p>
+    <?php endif ?>
 
     <div class="card">
         <div class="card-body table-responsive p-0">
@@ -112,9 +116,11 @@ $podeStock = Yii::$app->user->can('gerirStock');
                             ]),
                         ],
                         'visibleButtons' => [
+                            'update' => $podeEditar,
                             'stock' => $podeStock,
-                            'desativar' => fn(Produto $m) => (int) $m->ativo === 1,
-                            'ativar' => fn(Produto $m) => (int) $m->ativo === 0,
+                            'desativar' => fn(Produto $m) => $podeEditar && (int) $m->ativo === 1,
+                            'ativar' => fn(Produto $m) => $podeEditar && (int) $m->ativo === 0,
+                            'delete' => $podeEliminar,
                         ],
                     ],
                 ],

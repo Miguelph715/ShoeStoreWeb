@@ -9,6 +9,7 @@ namespace console\controllers;
 
 use Yii;
 use yii\console\Controller;
+use yii\db\Query;
 
 class RbacController extends Controller
 {
@@ -17,6 +18,8 @@ class RbacController extends Controller
     {
         //ponto de acesso ao RBAC: o componente authManager (common/config/main.php)
         $auth = Yii::$app->authManager;
+        //guardar os roles ja atribuidos, porque o removeAll tambem os apaga
+        $atribuicoes = (new Query())->select(['item_name', 'user_id'])->from($auth->assignmentTable)->all($auth->db);
         //apagar o que ja existir, para poder correr o comando mais do que uma vez
         $auth->removeAll();
 
@@ -31,17 +34,17 @@ class RbacController extends Controller
         //permissoes do gestor (back-office)
         $acederBackoffice = $this->permissao($auth, 'acederBackoffice', 'Entrar no back-office');
         $verDashboard = $this->permissao($auth, 'verDashboard', 'Ver o dashboard do back-office');
-        $gerirMarcas = $this->permissao($auth, 'gerirMarcas', 'CRUD de marcas');
-        $gerirCategorias = $this->permissao($auth, 'gerirCategorias', 'CRUD de categorias');
-        $gerirTamanhos = $this->permissao($auth, 'gerirTamanhos', 'CRUD de tamanhos');
-        $gerirProdutos = $this->permissao($auth, 'gerirProdutos', 'CRUD de produtos');
+        $marcas = $this->crud($auth, 'marcas', ['verMarcas', 'criarMarca', 'editarMarca', 'eliminarMarca']);
+        $categorias = $this->crud($auth, 'categorias', ['verCategorias', 'criarCategoria', 'editarCategoria', 'eliminarCategoria']);
+        $tamanhos = $this->crud($auth, 'tamanhos', ['verTamanhos', 'criarTamanho', 'editarTamanho', 'eliminarTamanho']);
+        $produtos = $this->crud($auth, 'produtos', ['verProdutos', 'criarProduto', 'editarProduto', 'eliminarProduto']);
         $gerirStock = $this->permissao($auth, 'gerirStock', 'Gerir o stock por tamanho');
         $gerirEncomendas = $this->permissao($auth, 'gerirEncomendas', 'Listar, ver, alterar o estado e cancelar encomendas');
 
         //permissoes so do admin
-        $gerirUtilizadores = $this->permissao($auth, 'gerirUtilizadores', 'CRUD de utilizadores com soft delete');
+        $utilizadores = $this->crud($auth, 'utilizadores', ['verUtilizadores', 'criarUtilizador', 'editarUtilizador', 'eliminarUtilizador']);
         $atribuirRoles = $this->permissao($auth, 'atribuirRoles', 'Atribuir e alterar roles dos utilizadores');
-        $gerirMetodosPagamento = $this->permissao($auth, 'gerirMetodosPagamento', 'CRUD de metodos de pagamento');
+        $metodosPagamento = $this->crud($auth, 'metodos de pagamento', ['verMetodosPagamento', 'criarMetodoPagamento', 'editarMetodoPagamento', 'eliminarMetodoPagamento']);
 
         //roles e as permissoes de cada um
         $cliente = $auth->createRole('cliente');
@@ -54,20 +57,28 @@ class RbacController extends Controller
         $gestor = $auth->createRole('gestor');
         $gestor->description = 'Gestor de loja: catalogo, stock e encomendas no back-office';
         $auth->add($gestor);
-        foreach ([$acederBackoffice, $verDashboard, $gerirMarcas, $gerirCategorias, $gerirTamanhos, $gerirProdutos, $gerirStock, $gerirEncomendas] as $p) {
+        foreach ([$acederBackoffice, $verDashboard, ...$marcas, ...$categorias, ...$tamanhos, ...$produtos, $gerirStock, $gerirEncomendas] as $p) {
             $auth->addChild($gestor, $p);
         }
 
         $admin = $auth->createRole('admin');
         $admin->description = 'Administrador: utilizadores, roles e metodos de pagamento (e tudo o que o gestor faz)';
         $auth->add($admin);
-        //o admin herda o gestor e acrescenta as suas tres permissoes
+        //o admin herda o gestor e acrescenta as suas permissoes
         $auth->addChild($admin, $gestor);
-        foreach ([$gerirUtilizadores, $atribuirRoles, $gerirMetodosPagamento] as $p) {
+        foreach ([...$utilizadores, $atribuirRoles, ...$metodosPagamento] as $p) {
             $auth->addChild($admin, $p);
         }
 
-        echo "RBAC criado: 3 roles e 17 permissoes.\n";
+        //repor os roles que os utilizadores ja tinham
+        foreach ($atribuicoes as $atribuicao) {
+            $role = $auth->getRole($atribuicao['item_name']);
+            if ($role !== null) {
+                $auth->assign($role, $atribuicao['user_id']);
+            }
+        }
+
+        echo "RBAC criado: 3 roles e 35 permissoes. Atribuicoes repostas: " . count($atribuicoes) . ".\n";
     }
 
     // php yii rbac/atribuir admin 1
@@ -83,6 +94,16 @@ class RbacController extends Controller
         //ligar o role ao utilizador (grava na tabela auth_assignment)
         $auth->assign($role, $idUtilizador);
         echo "Role $nomeRole atribuido ao utilizador $idUtilizador.\n";
+    }
+
+    //cria as 4 permissoes de um CRUD, pela ordem ver, criar, editar, eliminar
+    private function crud($auth, string $recurso, array $nomes)
+    {
+        $permissoes = [];
+        foreach (['Ver', 'Criar', 'Editar', 'Eliminar'] as $i => $verbo) {
+            $permissoes[] = $this->permissao($auth, $nomes[$i], "$verbo $recurso");
+        }
+        return $permissoes;
     }
 
     //cria a permissao e grava-a na tabela auth_item
