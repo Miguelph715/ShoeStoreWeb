@@ -10,7 +10,7 @@ use yii\db\Migration;
  */
 class m261022_100012_create_encomenda_table extends Migration
 {
-    public function safeUp(): void
+    public function safeUp()
     {
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
@@ -39,7 +39,7 @@ class m261022_100012_create_encomenda_table extends Migration
         $this->addForeignKey('fk_encomenda_metodo', '{{%encomenda}}', 'metodo_pagamento_id', '{{%metodo_pagamento}}', 'id', 'RESTRICT', 'CASCADE');
     }
 
-    public function safeDown(): void
+    public function safeDown()
     {
         $this->dropTable('{{%encomenda}}');
     }

@@ -23,7 +23,7 @@ class UserSearch extends User
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
             [['id', 'status'], 'integer'],
@@ -51,7 +51,7 @@ class UserSearch extends User
     /**
      * Cria o data provider da lista, com os filtros aplicados.
      */
-    public function search(array $params, string|null $formName = null): ActiveDataProvider
+    public function search(array $params, string|null $formName = null)
     {
         $query = User::find();
 

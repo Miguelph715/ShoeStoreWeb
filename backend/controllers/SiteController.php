@@ -23,7 +23,7 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors(): array
+    public function behaviors()
     {
         return [
             'access' => [
@@ -57,7 +57,7 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function actions(): array
+    public function actions()
     {
         return [
             'error' => [
@@ -71,7 +71,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string
+    public function actionIndex()
     {
         $db = Yii::$app->db;
         //o stock total de cada produto ativo (soma dos tamanhos)
@@ -107,7 +107,7 @@ class SiteController extends Controller
      *
      * @return string|Response
      */
-    public function actionLogin(): string|Response
+    public function actionLogin()
     {
         //quem ja tem sessao e permissao entra direto
         if (!Yii::$app->user->isGuest && Yii::$app->user->can('acederBackoffice')) {
@@ -138,7 +138,7 @@ class SiteController extends Controller
      *
      * @return Response
      */
-    public function actionLogout(): Response
+    public function actionLogout()
     {
         Yii::$app->user->logout();
 

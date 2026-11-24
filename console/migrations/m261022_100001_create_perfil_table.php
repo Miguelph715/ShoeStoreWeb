@@ -9,7 +9,7 @@ use yii\db\Migration;
  */
 class m261022_100001_create_perfil_table extends Migration
 {
-    public function safeUp(): void
+    public function safeUp()
     {
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
@@ -35,7 +35,7 @@ class m261022_100001_create_perfil_table extends Migration
         $this->addForeignKey('fk_perfil_user', '{{%perfil}}', 'user_id', '{{%user}}', 'id', 'CASCADE', 'CASCADE');
     }
 
-    public function safeDown(): void
+    public function safeDown()
     {
         $this->dropTable('{{%perfil}}');
     }

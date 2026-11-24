@@ -33,7 +33,7 @@ class ProdutoFiltro extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
             ['q', 'trim'],
@@ -47,7 +47,7 @@ class ProdutoFiltro extends Model
         ];
     }
 
-    public static function ordens(): array
+    public static function ordens()
     {
         return [
             'novidades' => 'Mais recentes',
@@ -57,12 +57,12 @@ class ProdutoFiltro extends Model
         ];
     }
 
-    public static function categoriasLista(): array
+    public static function categoriasLista()
     {
         return ArrayHelper::map(Categoria::find()->orderBy('nome')->asArray()->all(), 'id', 'nome');
     }
 
-    public static function marcasLista(): array
+    public static function marcasLista()
     {
         return ArrayHelper::map(Marca::find()->orderBy('nome')->asArray()->all(), 'id', 'nome');
     }
@@ -71,7 +71,7 @@ class ProdutoFiltro extends Model
      * Le os filtros do endereco e devolve os produtos (12 por pagina).
      * Um valor invalido (por exemplo ?genero=robot) e simplesmente ignorado.
      */
-    public function search(array $params): ActiveDataProvider
+    public function search(array $params)
     {
         $this->load($params, '');
         $this->validate();
@@ -134,7 +134,7 @@ class ProdutoFiltro extends Model
     /**
      * O titulo da pagina, conforme o filtro principal.
      */
-    public function titulo(): string
+    public function titulo()
     {
         if (!empty($this->q)) {
             return 'Resultados para “' . $this->q . '”';

@@ -10,8 +10,7 @@ use Yii;
 use yii\base\Model;
 
 /**
- * Registo de um cliente no front-office.
- * A conta fica logo ativa, com o role "cliente" do RBAC e o perfil criado.
+ * Registo de cliente no front-office.
  */
 class SignupForm extends Model
 {
@@ -22,7 +21,7 @@ class SignupForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
             ['username', 'trim'],
@@ -43,7 +42,7 @@ class SignupForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels(): array
+    public function attributeLabels()
     {
         return [
             'username' => 'Nome de utilizador',
@@ -53,49 +52,38 @@ class SignupForm extends Model
     }
 
     /**
-     * Regista o utilizador. Devolve o User criado, ou null se algo falhar.
-     * As 3 gravacoes (user, perfil, role) fazem-se numa transacao: ou ficam todas, ou nenhuma.
+     * Cria o user (ativo), o perfil e o role cliente.
      */
-    public function signup(): User|null
+    public function signup()
     {
         if (!$this->validate()) {
             return null;
         }
 
-        $transaction = Yii::$app->db->beginTransaction();
-        try {
-            //1. o utilizador, ativo logo (status 10), sem email de verificacao
-            $user = new User();
-            $user->username = $this->username;
-            $user->email = $this->email;
-            $user->status = User::STATUS_ACTIVE;
-            $user->setPassword($this->password);
-            $user->generateAuthKey();
-            if (!$user->save()) {
-                throw new \RuntimeException('Nao foi possivel criar o utilizador.');
-            }
+        $user = new User();
+        $user->username = $this->username;
+        $user->email = $this->email;
+        $user->status = User::STATUS_ACTIVE;
+        $user->setPassword($this->password);
+        $user->generateAuthKey();
+        if (!$user->save()) {
+            return null;
+        }
 
-            //2. o perfil (o nome comeca igual ao username; o cliente pode mudar mais tarde)
-            $perfil = new Perfil();
-            $perfil->user_id = $user->id;
-            $perfil->nome = $this->username;
-            $perfil->user_type = Perfil::TYPE_CLIENTE;
-            if (!$perfil->save()) {
-                throw new \RuntimeException('Nao foi possivel criar o perfil.');
-            }
-
-            //3. o role do RBAC (grava na tabela auth_assignment)
-            $auth = Yii::$app->authManager;
-            $auth->assign($auth->getRole('cliente'), $user->id);
-
-            $transaction->commit();
-
-            return $user;
-        } catch (\Throwable $e) {
-            $transaction->rollBack();
-            Yii::error('Registo falhou: ' . $e->getMessage());
+        $perfil = new Perfil();
+        $perfil->user_id = $user->id;
+        $perfil->nome = $this->username;
+        $perfil->user_type = Perfil::TYPE_CLIENTE;
+        if (!$perfil->save()) {
+            //sem perfil a conta fica incompleta
+            $user->delete();
 
             return null;
         }
+
+        $auth = Yii::$app->authManager;
+        $auth->assign($auth->getRole('cliente'), $user->id);
+
+        return $user;
     }
 }

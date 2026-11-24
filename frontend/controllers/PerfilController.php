@@ -21,7 +21,7 @@ class PerfilController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors(): array
+    public function behaviors()
     {
         return [
             'access' => [
@@ -33,12 +33,12 @@ class PerfilController extends Controller
         ];
     }
 
-    public function actionIndex(): string
+    public function actionIndex()
     {
         return $this->render('index', ['perfil' => $this->findPerfil()]);
     }
 
-    public function actionEditar(): string|Response
+    public function actionEditar()
     {
         $perfil = $this->findPerfil();
         $form = PerfilForm::fromPerfil($perfil);
@@ -52,7 +52,7 @@ class PerfilController extends Controller
         return $this->render('editar', ['form' => $form]);
     }
 
-    public function actionPassword(): string|Response
+    public function actionPassword()
     {
         $form = new AlterarPasswordForm(Yii::$app->user->identity);
 
@@ -70,7 +70,7 @@ class PerfilController extends Controller
      *
      * @throws NotFoundHttpException se nao existir
      */
-    protected function findPerfil(): Perfil
+    protected function findPerfil()
     {
         $perfil = Perfil::findOne(['user_id' => Yii::$app->user->id]);
         if ($perfil === null) {

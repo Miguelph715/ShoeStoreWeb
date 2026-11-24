@@ -13,7 +13,7 @@ use yii\base\InvalidArgumentException;
 final class ResetPasswordFormTest extends Unit
 {
     protected UnitTester $tester;
-    public function _before(): void
+    public function _before()
     {
         $this->tester->haveFixtures(
             [
@@ -25,24 +25,24 @@ final class ResetPasswordFormTest extends Unit
         );
     }
 
-    public function testResetWrongToken(): void
+    public function testResetWrongToken()
     {
         $this->tester->expectThrowable(
             InvalidArgumentException::class,
-            static function (): void {
+            static function () {
                 new ResetPasswordForm('');
             },
         );
 
         $this->tester->expectThrowable(
             InvalidArgumentException::class,
-            static function (): void {
+            static function () {
                 new ResetPasswordForm('notexistingtoken_1391882543');
             },
         );
     }
 
-    public function testResetCorrectToken(): void
+    public function testResetCorrectToken()
     {
         $user = $this->tester->grabFixture('user', 0);
 

@@ -9,7 +9,7 @@ use yii\db\Migration;
  */
 class m261022_100007_create_produto_tamanho_table extends Migration
 {
-    public function safeUp(): void
+    public function safeUp()
     {
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
@@ -32,7 +32,7 @@ class m261022_100007_create_produto_tamanho_table extends Migration
         $this->addForeignKey('fk_pt_tamanho', '{{%produto_tamanho}}', 'tamanho_id', '{{%tamanho}}', 'id', 'RESTRICT', 'CASCADE');
     }
 
-    public function safeDown(): void
+    public function safeDown()
     {
         $this->dropTable('{{%produto_tamanho}}');
     }

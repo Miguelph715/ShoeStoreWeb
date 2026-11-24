@@ -23,12 +23,12 @@ class Cart
     /**
      * As linhas guardadas na sessao: chave => [produto_id, tamanho_id, cor_id, quantidade].
      */
-    public static function linhas(): array
+    public static function linhas()
     {
         return Yii::$app->session->get(self::CHAVE, []);
     }
 
-    public static function vazio(): bool
+    public static function vazio()
     {
         return self::linhas() === [];
     }
@@ -36,7 +36,7 @@ class Cart
     /**
      * O numero total de pares no carrinho (o numerozinho do icone do saco).
      */
-    public static function quantidadeTotal(): int
+    public static function quantidadeTotal()
     {
         return (int) array_sum(array_column(self::linhas(), 'quantidade'));
     }
@@ -44,7 +44,7 @@ class Cart
     /**
      * Junta uma linha ao carrinho. Devolve null se correu bem, ou o texto do erro.
      */
-    public static function adicionar(int $produtoId, int $tamanhoId, int $corId, int $quantidade): string|null
+    public static function adicionar(int $produtoId, int $tamanhoId, int $corId, int $quantidade)
     {
         if ($quantidade < 1) {
             return 'Indica uma quantidade válida.';
@@ -83,7 +83,7 @@ class Cart
     /**
      * Muda a quantidade de uma linha (0 ou menos tira a linha). Devolve null ou o texto do aviso.
      */
-    public static function atualizar(string $chave, int $quantidade): string|null
+    public static function atualizar(string $chave, int $quantidade)
     {
         $linhas = self::linhas();
         if (!isset($linhas[$chave])) {
@@ -112,14 +112,14 @@ class Cart
         return $aviso;
     }
 
-    public static function remover(string $chave): void
+    public static function remover(string $chave)
     {
         $linhas = self::linhas();
         unset($linhas[$chave]);
         Yii::$app->session->set(self::CHAVE, $linhas);
     }
 
-    public static function limpar(): void
+    public static function limpar()
     {
         Yii::$app->session->remove(self::CHAVE);
     }
@@ -128,7 +128,7 @@ class Cart
      * As linhas completas, prontas a mostrar: o produto, o tamanho, a cor, o preco e o subtotal.
      * `problema` vem preenchido quando a linha ja nao se pode comprar (esgotou ou o produto saiu).
      */
-    public static function detalhe(): array
+    public static function detalhe()
     {
         $resultado = [];
         foreach (self::linhas() as $chave => $l) {
@@ -167,7 +167,7 @@ class Cart
         return $resultado;
     }
 
-    public static function total(): float
+    public static function total()
     {
         return (float) array_sum(array_column(self::detalhe(), 'subtotal'));
     }
@@ -175,7 +175,7 @@ class Cart
     /**
      * O stock de um tamanho de um produto (null se o produto nao tem esse tamanho).
      */
-    private static function stock(int $produtoId, int $tamanhoId): int|null
+    private static function stock(int $produtoId, int $tamanhoId)
     {
         $pt = ProdutoTamanho::findOne(['produto_id' => $produtoId, 'tamanho_id' => $tamanhoId]);
 

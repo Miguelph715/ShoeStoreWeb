@@ -13,7 +13,7 @@ use yii\mail\MessageInterface;
 final class ContactFormTest extends Unit
 {
     protected UnitTester $tester;
-    public function testSendEmail(): void
+    public function testSendEmail()
     {
         $model = new ContactForm();
 

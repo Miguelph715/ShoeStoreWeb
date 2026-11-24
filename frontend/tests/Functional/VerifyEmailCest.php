@@ -10,7 +10,7 @@ use frontend\tests\Support\FunctionalTester;
 
 final class VerifyEmailCest
 {
-    public function _fixtures(): array
+    public function _fixtures()
     {
         return [
             'user' => [
@@ -20,35 +20,35 @@ final class VerifyEmailCest
         ];
     }
 
-    public function checkEmptyToken(FunctionalTester $I): void
+    public function checkEmptyToken(FunctionalTester $I)
     {
         $I->amOnRoute('site/verify-email', ['token' => '']);
         $I->canSee('400', 'h1');
         $I->canSee('Verify email token cannot be blank.', 'h2');
     }
 
-    public function checkInvalidToken(FunctionalTester $I): void
+    public function checkInvalidToken(FunctionalTester $I)
     {
         $I->amOnRoute('site/verify-email', ['token' => 'wrong_token']);
         $I->canSee('400', 'h1');
         $I->canSee('Wrong verify email token.', 'h2');
     }
 
-    public function checkNoToken(FunctionalTester $I): void
+    public function checkNoToken(FunctionalTester $I)
     {
         $I->amOnRoute('site/verify-email');
         $I->canSee('400', 'h1');
         $I->canSee('Missing required parameters: token', 'h2');
     }
 
-    public function checkAlreadyActivatedToken(FunctionalTester $I): void
+    public function checkAlreadyActivatedToken(FunctionalTester $I)
     {
         $I->amOnRoute('site/verify-email', ['token' => 'already_used_token_1548675330']);
         $I->canSee('400', 'h1');
         $I->canSee('Wrong verify email token.', 'h2');
     }
 
-    public function checkSuccessVerification(FunctionalTester $I): void
+    public function checkSuccessVerification(FunctionalTester $I)
     {
         $I->amOnRoute('site/verify-email', ['token' => '4ch0qbfhvWwkcuWqjN8SWRq72SOw1KYT_1548675330']);
         $I->canSee('Your email has been confirmed!');

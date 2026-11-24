@@ -22,7 +22,7 @@ class PerfilForm extends Model
     /**
      * Cria o formulario ja preenchido com os dados do perfil.
      */
-    public static function fromPerfil(Perfil $perfil): self
+    public static function fromPerfil(Perfil $perfil)
     {
         $form = new self();
         foreach (['nome', 'telefone', 'morada', 'codigo_postal', 'cidade', 'nif'] as $campo) {
@@ -35,7 +35,7 @@ class PerfilForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
             [['nome', 'telefone', 'morada', 'codigo_postal', 'cidade', 'nif'], 'trim'],
@@ -53,7 +53,7 @@ class PerfilForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels(): array
+    public function attributeLabels()
     {
         return [
             'nome' => 'Nome',
@@ -68,7 +68,7 @@ class PerfilForm extends Model
     /**
      * Grava no perfil. Devolve true se correu bem.
      */
-    public function guardar(Perfil $perfil): bool
+    public function guardar(Perfil $perfil)
     {
         if (!$this->validate()) {
             return false;

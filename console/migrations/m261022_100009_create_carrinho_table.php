@@ -9,7 +9,7 @@ use yii\db\Migration;
  */
 class m261022_100009_create_carrinho_table extends Migration
 {
-    public function safeUp(): void
+    public function safeUp()
     {
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
@@ -27,7 +27,7 @@ class m261022_100009_create_carrinho_table extends Migration
         $this->addForeignKey('fk_carrinho_user', '{{%carrinho}}', 'user_id', '{{%user}}', 'id', 'CASCADE', 'CASCADE');
     }
 
-    public function safeDown(): void
+    public function safeDown()
     {
         $this->dropTable('{{%carrinho}}');
     }

@@ -8,7 +8,7 @@ use frontend\tests\Support\AcceptanceTester;
 
 final class HomeCest
 {
-    public function checkHome(AcceptanceTester $I): void
+    public function checkHome(AcceptanceTester $I)
     {
         $I->amOnPage('/');
         $I->see('My Application');

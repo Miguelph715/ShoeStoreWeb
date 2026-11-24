@@ -17,7 +17,7 @@ class Loja
     /**
      * As ligacoes que aparecem no meio da barra de cima.
      */
-    public static function menuPrincipal(): array
+    public static function menuPrincipal()
     {
         return [
             ['Novidades', ['/produto/index', 'novidades' => 1]],
@@ -28,12 +28,12 @@ class Loja
         ];
     }
 
-    public static function generos(): array
+    public static function generos()
     {
         return ['homem' => 'Homem', 'mulher' => 'Mulher', 'crianca' => 'Criança'];
     }
 
-    public static function usos(): array
+    public static function usos()
     {
         return ['desporto' => 'Desporto', 'estilo' => 'Estilo', 'formal' => 'Formal'];
     }
@@ -41,7 +41,7 @@ class Loja
     /**
      * O preco que o cliente paga: o promocional, se existir, senao o normal.
      */
-    public static function precoAtual(Produto $p): float
+    public static function precoAtual(Produto $p)
     {
         return $p->preco_promocional !== null ? (float) $p->preco_promocional : (float) $p->preco;
     }
@@ -49,12 +49,12 @@ class Loja
     /**
      * O stock total do produto (a soma dos tamanhos). Precisa do produto com os tamanhos carregados.
      */
-    public static function stockTotal(Produto $p): int
+    public static function stockTotal(Produto $p)
     {
         return (int) array_sum(array_map(fn($t) => (int) $t->stock, $p->produtoTamanhos));
     }
 
-    public static function emPromocao(Produto $p): bool
+    public static function emPromocao(Produto $p)
     {
         return $p->preco_promocional !== null;
     }
@@ -62,7 +62,7 @@ class Loja
     /**
      * A percentagem de desconto (arredondada), por exemplo 20.
      */
-    public static function desconto(Produto $p): int
+    public static function desconto(Produto $p)
     {
         if (!self::emPromocao($p) || (float) $p->preco <= 0) {
             return 0;
@@ -74,7 +74,7 @@ class Loja
     /**
      * Um valor em euros, ao estilo portugues: 119,99 €
      */
-    public static function euros(float $valor): string
+    public static function euros(float $valor)
     {
         return number_format($valor, 2, ',', '.') . ' €';
     }
@@ -84,7 +84,7 @@ class Loja
      *
      * @return int[]
      */
-    public static function favoritosDoUtilizador(): array
+    public static function favoritosDoUtilizador()
     {
         if (Yii::$app->user->isGuest) {
             return [];
@@ -99,7 +99,7 @@ class Loja
     /**
      * A cor do "badge" do estado de uma encomenda.
      */
-    public static function estadoClasse(string $estado): string
+    public static function estadoClasse(string $estado)
     {
         return match ($estado) {
             'Pendente' => 'warning',

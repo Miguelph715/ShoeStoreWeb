@@ -13,7 +13,7 @@ use yii\console\Controller;
 class RbacController extends Controller
 {
     // php yii rbac/init
-    public function actionInit(): void
+    public function actionInit()
     {
         //ponto de acesso ao RBAC: o componente authManager (common/config/main.php)
         $auth = Yii::$app->authManager;
@@ -71,7 +71,7 @@ class RbacController extends Controller
     }
 
     // php yii rbac/atribuir admin 1
-    public function actionAtribuir(string $nomeRole, int $idUtilizador): void
+    public function actionAtribuir(string $nomeRole, int $idUtilizador)
     {
         $auth = Yii::$app->authManager;
         //buscar o role que ja foi criado no actionInit

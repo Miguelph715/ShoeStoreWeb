@@ -9,7 +9,7 @@ use Yii;
 
 final class HomeCest
 {
-    public function checkOpen(FunctionalTester $I): void
+    public function checkOpen(FunctionalTester $I)
     {
         $I->amOnRoute(Yii::$app->homeUrl);
         $I->see('My Application');

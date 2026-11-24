@@ -38,7 +38,7 @@ class ResetPasswordForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
             ['password', 'required'],
@@ -51,7 +51,7 @@ class ResetPasswordForm extends Model
      *
      * @return bool if password was reset.
      */
-    public function resetPassword(): bool
+    public function resetPassword()
     {
         $user = $this->_user;
         $user->setPassword($this->password);

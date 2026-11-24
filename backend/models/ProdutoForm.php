@@ -9,13 +9,11 @@ use common\models\Cor;
 use common\models\Marca;
 use common\models\Produto;
 use common\models\ProdutoCor;
-use Yii;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
 
 /**
- * Formulario do back-office para criar e editar um produto:
- * grava de uma vez o Produto e as suas cores (o stock tem a sua propria pagina).
+ * Criar/editar um produto e as suas cores.
  */
 class ProdutoForm extends Model
 {
@@ -31,41 +29,38 @@ class ProdutoForm extends Model
     public $ativo = 1;
     public $cores = [];
 
-    //o produto que se esta a editar (null quando se esta a criar)
+    //null ao criar
     private Produto|null $_produto = null;
 
-    public static function generos(): array
+    public static function generos()
     {
         return ['homem' => 'Homem', 'mulher' => 'Mulher', 'crianca' => 'Criança', 'unissexo' => 'Unissexo'];
     }
 
-    public static function usos(): array
+    public static function usos()
     {
         return ['desporto' => 'Desporto', 'estilo' => 'Estilo', 'formal' => 'Formal'];
     }
 
-    public static function marcas(): array
+    public static function marcas()
     {
         return ArrayHelper::map(Marca::find()->orderBy('nome')->asArray()->all(), 'id', 'nome');
     }
 
-    public static function categorias(): array
+    public static function categorias()
     {
         return ArrayHelper::map(Categoria::find()->orderBy('nome')->asArray()->all(), 'id', 'nome');
     }
 
-    /**
-     * Todas as cores: id => nome.
-     */
-    public static function listaCores(): array
+    public static function listaCores()
     {
         return ArrayHelper::map(Cor::find()->orderBy('nome')->asArray()->all(), 'id', 'nome');
     }
 
     /**
-     * Cria o formulario ja preenchido com os dados de um produto existente.
+     * Formulário preenchido com um produto existente.
      */
-    public static function fromProduto(Produto $produto): self
+    public static function fromProduto(Produto $produto)
     {
         $form = new self();
         $form->_produto = $produto;
@@ -77,15 +72,12 @@ class ProdutoForm extends Model
         return $form;
     }
 
-    public function getProduto(): Produto|null
+    public function getProduto()
     {
         return $this->_produto;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rules(): array
+    public function rules()
     {
         return [
             [['nome', 'descricao', 'imagem'], 'trim'],
@@ -108,10 +100,8 @@ class ProdutoForm extends Model
         ];
     }
 
-    /**
-     * Se houver preco promocional, tem de ser mais baixo do que o preco normal.
-     */
-    public function validatePromocao(string $atributo): void
+    //a promoção tem de ser mais barata que o preço
+    public function validatePromocao(string $atributo)
     {
         if ($this->preco_promocional !== null && $this->preco_promocional !== '' && $this->preco !== null
             && (float) $this->preco_promocional >= (float) $this->preco) {
@@ -119,10 +109,7 @@ class ProdutoForm extends Model
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels(): array
+    public function attributeLabels()
     {
         return [
             'nome' => 'Nome',
@@ -140,51 +127,41 @@ class ProdutoForm extends Model
     }
 
     /**
-     * Grava o produto e as cores numa transacao. Devolve true se correu bem.
+     * Grava o produto e as cores.
      */
-    public function guardar(): bool
+    public function guardar()
     {
         if (!$this->validate()) {
             return false;
         }
 
-        $transacao = Yii::$app->db->beginTransaction();
-        try {
-            $produto = $this->_produto ?? new Produto();
-            foreach (['nome', 'descricao', 'marca_id', 'categoria_id', 'preco', 'preco_promocional', 'genero', 'uso', 'imagem'] as $campo) {
-                $produto->$campo = $this->$campo === '' ? null : $this->$campo;
-            }
-            $produto->ativo = (int) $this->ativo;
-            $agora = time();
-            if ($produto->isNewRecord) {
-                $produto->created_at = $agora;
-            }
-            $produto->updated_at = $agora;
-            if (!$produto->save()) {
-                throw new \RuntimeException('produto: ' . json_encode($produto->errors));
-            }
-
-            //as cores: apaga as antigas e grava as escolhidas
-            ProdutoCor::deleteAll(['produto_id' => $produto->id]);
-            foreach (array_unique(array_map('intval', (array) $this->cores)) as $corId) {
-                $pc = new ProdutoCor();
-                $pc->produto_id = $produto->id;
-                $pc->cor_id = $corId;
-                if (!$pc->save()) {
-                    throw new \RuntimeException('cor: ' . json_encode($pc->errors));
-                }
-            }
-
-            $transacao->commit();
-            $this->_produto = $produto;
-
-            return true;
-        } catch (\Throwable $e) {
-            $transacao->rollBack();
-            $this->addError('nome', 'Não foi possível gravar o produto.');
-            Yii::error('ProdutoForm: ' . $e->getMessage());
+        $produto = $this->_produto ?? new Produto();
+        foreach (['nome', 'descricao', 'marca_id', 'categoria_id', 'preco', 'preco_promocional', 'genero', 'uso', 'imagem'] as $campo) {
+            $produto->$campo = $this->$campo === '' ? null : $this->$campo;
+        }
+        $produto->ativo = (int) $this->ativo;
+        if ($produto->isNewRecord) {
+            $produto->created_at = time();
+        }
+        $produto->updated_at = time();
+        if (!$produto->save()) {
+            $this->addErrors($produto->errors);
 
             return false;
         }
+        $this->_produto = $produto;
+
+        //substitui as cores
+        ProdutoCor::deleteAll(['produto_id' => $produto->id]);
+        foreach (array_unique(array_map('intval', (array) $this->cores)) as $corId) {
+            $pc = new ProdutoCor(['produto_id' => $produto->id, 'cor_id' => $corId]);
+            if (!$pc->save()) {
+                $this->addError('cores', 'Não foi possível gravar as cores.');
+
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -9,7 +9,7 @@ use yii\db\Migration;
  */
 class m261022_100014_create_cor_table extends Migration
 {
-    public function safeUp(): void
+    public function safeUp()
     {
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
@@ -24,7 +24,7 @@ class m261022_100014_create_cor_table extends Migration
         ], $tableOptions);
     }
 
-    public function safeDown(): void
+    public function safeDown()
     {
         $this->dropTable('{{%cor}}');
     }

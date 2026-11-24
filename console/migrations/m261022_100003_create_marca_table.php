@@ -6,7 +6,7 @@ use yii\db\Migration;
 
 class m261022_100003_create_marca_table extends Migration
 {
-    public function safeUp(): void
+    public function safeUp()
     {
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
@@ -20,7 +20,7 @@ class m261022_100003_create_marca_table extends Migration
         ], $tableOptions);
     }
 
-    public function safeDown(): void
+    public function safeDown()
     {
         $this->dropTable('{{%marca}}');
     }

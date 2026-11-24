@@ -24,7 +24,7 @@ class UserController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors(): array
+    public function behaviors()
     {
         return array_merge(
             parent::behaviors(),
@@ -54,7 +54,7 @@ class UserController extends Controller
     /**
      * Lista os utilizadores (com filtros por username, email, estado e role).
      */
-    public function actionIndex(): string
+    public function actionIndex()
     {
         $searchModel = new UserSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -68,7 +68,7 @@ class UserController extends Controller
     /**
      * Mostra um utilizador, com o perfil e o role.
      */
-    public function actionView(int $id): string
+    public function actionView(int $id)
     {
         $model = $this->findModel($id);
 
@@ -82,7 +82,7 @@ class UserController extends Controller
     /**
      * Cria um utilizador (com perfil e role).
      */
-    public function actionCreate(): string|Response
+    public function actionCreate()
     {
         $model = new UserForm();
 
@@ -99,7 +99,7 @@ class UserController extends Controller
     /**
      * Altera um utilizador (dados, estado e role).
      */
-    public function actionUpdate(int $id): string|Response
+    public function actionUpdate(int $id)
     {
         $model = UserForm::fromUser($this->findModel($id));
 
@@ -116,7 +116,7 @@ class UserController extends Controller
     /**
      * SOFT DELETE: marca o utilizador como eliminado (status 0), sem apagar a linha.
      */
-    public function actionDelete(int $id): Response
+    public function actionDelete(int $id)
     {
         $model = $this->findModel($id);
 
@@ -135,7 +135,7 @@ class UserController extends Controller
     /**
      * Reverte o soft delete: o utilizador volta a ficar ativo (status 10).
      */
-    public function actionRestore(int $id): Response
+    public function actionRestore(int $id)
     {
         $model = $this->findModel($id);
         $model->restore();
@@ -149,7 +149,7 @@ class UserController extends Controller
      *
      * @throws NotFoundHttpException se nao existir
      */
-    protected function findModel(int $id): User
+    protected function findModel(int $id)
     {
         if (($model = User::findOne(['id' => $id])) !== null) {
             return $model;

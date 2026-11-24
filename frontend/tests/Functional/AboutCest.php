@@ -8,7 +8,7 @@ use frontend\tests\Support\FunctionalTester;
 
 final class AboutCest
 {
-    public function checkAbout(FunctionalTester $I): void
+    public function checkAbout(FunctionalTester $I)
     {
         $I->amOnRoute('site/about');
         $I->see('About', 'h1');

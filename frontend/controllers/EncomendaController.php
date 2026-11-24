@@ -26,7 +26,7 @@ class EncomendaController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors(): array
+    public function behaviors()
     {
         return [
             'access' => [
@@ -45,7 +45,7 @@ class EncomendaController extends Controller
     /**
      * O historico de encomendas do cliente.
      */
-    public function actionIndex(): string
+    public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Encomenda::find()->where(['user_id' => Yii::$app->user->id])->orderBy(['id' => SORT_DESC]),
@@ -59,7 +59,7 @@ class EncomendaController extends Controller
     /**
      * O ecra de finalizar: os dados de envio e o metodo de pagamento.
      */
-    public function actionFinalizar(): string|Response
+    public function actionFinalizar()
     {
         if (Cart::vazio()) {
             Yii::$app->session->setFlash('warning', 'O teu carrinho está vazio.');
@@ -97,7 +97,7 @@ class EncomendaController extends Controller
     /**
      * O detalhe de uma encomenda (so a do proprio cliente).
      */
-    public function actionView(int $id): string
+    public function actionView(int $id)
     {
         return $this->render('view', ['encomenda' => $this->findDoCliente($id)]);
     }
@@ -105,7 +105,7 @@ class EncomendaController extends Controller
     /**
      * Cancela uma encomenda pendente e devolve o stock.
      */
-    public function actionCancelar(int $id): Response
+    public function actionCancelar(int $id)
     {
         $encomenda = $this->findDoCliente($id);
         if ($encomenda->estado !== 'Pendente') {
@@ -130,7 +130,7 @@ class EncomendaController extends Controller
      *
      * @throws NotFoundHttpException se nao existir ou for de outro cliente
      */
-    protected function findDoCliente(int $id): Encomenda
+    protected function findDoCliente(int $id)
     {
         $encomenda = Encomenda::findOne(['id' => $id, 'user_id' => Yii::$app->user->id]);
         if ($encomenda === null) {

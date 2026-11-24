@@ -41,7 +41,7 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors(): array
+    public function behaviors()
     {
         return [
             'access' => [
@@ -72,7 +72,7 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function actions(): array
+    public function actions()
     {
         return [
             'error' => [
@@ -90,7 +90,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string
+    public function actionIndex()
     {
         //os 4 produtos ativos mais recentes, para a montra da pagina inicial
         $produtos = Produto::find()
@@ -110,7 +110,7 @@ class SiteController extends Controller
      *
      * @return string|Response
      */
-    public function actionLogin(): string|Response
+    public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
@@ -134,7 +134,7 @@ class SiteController extends Controller
      *
      * @return Response
      */
-    public function actionLogout(): Response
+    public function actionLogout()
     {
         Yii::$app->user->logout();
 
@@ -146,7 +146,7 @@ class SiteController extends Controller
      *
      * @return string|Response
      */
-    public function actionContact(): string|Response
+    public function actionContact()
     {
         $model = new ContactForm();
 
@@ -177,7 +177,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionAbout(): string
+    public function actionAbout()
     {
         return $this->render('about');
     }
@@ -187,7 +187,7 @@ class SiteController extends Controller
      *
      * @return string|Response
      */
-    public function actionSignup(): string|Response
+    public function actionSignup()
     {
         $model = new SignupForm();
 
@@ -208,7 +208,7 @@ class SiteController extends Controller
      *
      * @return string|Response
      */
-    public function actionRequestPasswordReset(): string|Response
+    public function actionRequestPasswordReset()
     {
         $model = new PasswordResetRequestForm();
 
@@ -240,7 +240,7 @@ class SiteController extends Controller
      * @return string|Response
      * @throws BadRequestHttpException
      */
-    public function actionResetPassword(string $token): string|Response
+    public function actionResetPassword(string $token)
     {
         try {
             $model = new ResetPasswordForm($token);
@@ -266,7 +266,7 @@ class SiteController extends Controller
      * @return Response
      * @throws BadRequestHttpException
      */
-    public function actionVerifyEmail(string $token): Response
+    public function actionVerifyEmail(string $token)
     {
         try {
             $model = new VerifyEmailForm($token);
@@ -288,7 +288,7 @@ class SiteController extends Controller
      *
      * @return string|Response
      */
-    public function actionResendVerificationEmail(): string|Response
+    public function actionResendVerificationEmail()
     {
         $model = new ResendVerificationEmailForm();
 

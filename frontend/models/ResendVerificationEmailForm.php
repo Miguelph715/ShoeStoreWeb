@@ -14,7 +14,7 @@ class ResendVerificationEmailForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
             ['email', 'trim'],
@@ -37,7 +37,7 @@ class ResendVerificationEmailForm extends Model
      *
      * @return bool whether the email was sent.
      */
-    public function sendEmail(MailerInterface $mailer, string $supportEmail, string $appName): bool
+    public function sendEmail(MailerInterface $mailer, string $supportEmail, string $appName)
     {
         $user = User::findOne([
             'email' => $this->email,

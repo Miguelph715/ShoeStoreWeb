@@ -13,7 +13,7 @@ use Yii;
 final class LoginFormTest extends Unit
 {
     protected UnitTester $tester;
-    public function _fixtures(): array
+    public function _fixtures()
     {
         return [
             'user' => [
@@ -23,7 +23,7 @@ final class LoginFormTest extends Unit
         ];
     }
 
-    public function testLoginNoUser(): void
+    public function testLoginNoUser()
     {
         $model = new LoginForm(
             [
@@ -38,7 +38,7 @@ final class LoginFormTest extends Unit
             ->true();
     }
 
-    public function testLoginWrongPassword(): void
+    public function testLoginWrongPassword()
     {
         $model = new LoginForm(
             [
@@ -55,7 +55,7 @@ final class LoginFormTest extends Unit
             ->true();
     }
 
-    public function testLoginCorrect(): void
+    public function testLoginCorrect()
     {
         $model = new LoginForm(
             [

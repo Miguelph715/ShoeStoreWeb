@@ -10,12 +10,12 @@ use frontend\tests\Support\FunctionalTester;
 final class SignupCest
 {
     protected string $formId = '#form-signup';
-    public function _before(FunctionalTester $I): void
+    public function _before(FunctionalTester $I)
     {
         $I->amOnRoute('site/signup');
     }
 
-    public function signupWithEmptyFields(FunctionalTester $I): void
+    public function signupWithEmptyFields(FunctionalTester $I)
     {
         $I->see('Create a new account', 'h1');
         $I->see('Fill out the fields below to get started');
@@ -25,7 +25,7 @@ final class SignupCest
         $I->seeValidationError('Password cannot be blank.');
     }
 
-    public function signupWithWrongEmail(FunctionalTester $I): void
+    public function signupWithWrongEmail(FunctionalTester $I)
     {
         $I->submitForm(
             $this->formId,
@@ -40,7 +40,7 @@ final class SignupCest
         $I->see('Email is not a valid email address.', '.invalid-feedback');
     }
 
-    public function signupSuccessfully(FunctionalTester $I): void
+    public function signupSuccessfully(FunctionalTester $I)
     {
         $I->submitForm(
             $this->formId, 

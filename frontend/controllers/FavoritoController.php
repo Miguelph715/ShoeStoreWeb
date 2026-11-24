@@ -21,7 +21,7 @@ class FavoritoController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors(): array
+    public function behaviors()
     {
         return [
             'access' => [
@@ -40,7 +40,7 @@ class FavoritoController extends Controller
     /**
      * A lista dos produtos favoritos.
      */
-    public function actionIndex(): string
+    public function actionIndex()
     {
         $produtos = Produto::find()
             ->alias('p')
@@ -59,7 +59,7 @@ class FavoritoController extends Controller
     /**
      * Marca o produto como favorito, ou desmarca se ja for.
      */
-    public function actionAlternar(): Response
+    public function actionAlternar()
     {
         $produtoId = (int) $this->request->post('produto_id');
         $userId = (int) Yii::$app->user->id;
@@ -89,7 +89,7 @@ class FavoritoController extends Controller
     /**
      * Volta a pagina de onde o pedido veio (so se for deste site), ou vai para a rota por omissao.
      */
-    private function voltar(array $padrao): Response
+    private function voltar(array $padrao)
     {
         $anterior = $this->request->referrer;
         if ($anterior && str_starts_with($anterior, $this->request->hostInfo)) {

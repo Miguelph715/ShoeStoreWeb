@@ -25,7 +25,7 @@ class ProdutoController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors(): array
+    public function behaviors()
     {
         return array_merge(
             parent::behaviors(),
@@ -50,7 +50,7 @@ class ProdutoController extends Controller
         );
     }
 
-    public function actionIndex(): string
+    public function actionIndex()
     {
         $searchModel = new ProdutoSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -58,12 +58,12 @@ class ProdutoController extends Controller
         return $this->render('index', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }
 
-    public function actionView(int $id): string
+    public function actionView(int $id)
     {
         return $this->render('view', ['model' => $this->findModel($id)]);
     }
 
-    public function actionCreate(): string|Response
+    public function actionCreate()
     {
         $form = new ProdutoForm();
 
@@ -77,7 +77,7 @@ class ProdutoController extends Controller
         return $this->render('create', ['model' => $form]);
     }
 
-    public function actionUpdate(int $id): string|Response
+    public function actionUpdate(int $id)
     {
         $form = ProdutoForm::fromProduto($this->findModel($id));
 
@@ -93,7 +93,7 @@ class ProdutoController extends Controller
     /**
      * O stock de cada tamanho do produto.
      */
-    public function actionStock(int $id): string|Response
+    public function actionStock(int $id)
     {
         $produto = $this->findModel($id);
         $form = new StockForm($produto);
@@ -113,7 +113,7 @@ class ProdutoController extends Controller
     /**
      * Desativar: o produto deixa de aparecer na loja, mas continua na base (e nas encomendas antigas).
      */
-    public function actionDesativar(int $id): Response
+    public function actionDesativar(int $id)
     {
         $produto = $this->findModel($id);
         $produto->ativo = 0;
@@ -124,7 +124,7 @@ class ProdutoController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionAtivar(int $id): Response
+    public function actionAtivar(int $id)
     {
         $produto = $this->findModel($id);
         $produto->ativo = 1;
@@ -138,7 +138,7 @@ class ProdutoController extends Controller
     /**
      * Eliminar de vez. So e possivel se o produto nunca foi encomendado.
      */
-    public function actionDelete(int $id): Response
+    public function actionDelete(int $id)
     {
         $produto = $this->findModel($id);
 
@@ -158,7 +158,7 @@ class ProdutoController extends Controller
     /**
      * @throws NotFoundHttpException se o produto nao existir
      */
-    protected function findModel(int $id): Produto
+    protected function findModel(int $id)
     {
         $produto = Produto::find()->with(['marca', 'categoria', 'produtoTamanhos.tamanho', 'cors'])->where(['id' => $id])->one();
         if ($produto === null) {

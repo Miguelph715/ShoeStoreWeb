@@ -38,7 +38,7 @@ class VerifyEmailForm extends Model
      *
      * @return User|null the saved model or null if saving fails
      */
-    public function verifyEmail(): User|null
+    public function verifyEmail()
     {
         $user = $this->_user;
 

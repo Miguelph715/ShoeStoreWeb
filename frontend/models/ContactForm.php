@@ -20,7 +20,7 @@ class ContactForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
             // name, email, subject and body are required
@@ -35,7 +35,7 @@ class ContactForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels(): array
+    public function attributeLabels()
     {
         return [
             'name' => 'Nome',
@@ -56,7 +56,7 @@ class ContactForm extends Model
      *
      * @return bool whether the email was sent.
      */
-    public function sendEmail(MailerInterface $mailer, string $email, string $senderEmail, string $senderName): bool
+    public function sendEmail(MailerInterface $mailer, string $email, string $senderEmail, string $senderName)
     {
         return $mailer->compose()
             ->setTo($email)

@@ -10,8 +10,7 @@ use Yii;
 use yii\base\Model;
 
 /**
- * Formulario do back-office para criar e editar um utilizador:
- * grava de uma vez o User, o Perfil (nome e tipo) e o role do RBAC.
+ * Criar/editar um utilizador, o perfil e o role.
  */
 class UserForm extends Model
 {
@@ -28,7 +27,7 @@ class UserForm extends Model
     /**
      * Os roles que se podem dar a um utilizador.
      */
-    public static function roleList(): array
+    public static function roleList()
     {
         return ['cliente' => 'Cliente', 'gestor' => 'Gestor', 'admin' => 'Admin'];
     }
@@ -36,7 +35,7 @@ class UserForm extends Model
     /**
      * Cria o formulario ja preenchido com os dados de um utilizador existente.
      */
-    public static function fromUser(User $user): self
+    public static function fromUser(User $user)
     {
         $form = new self();
         $form->_user = $user;
@@ -53,7 +52,7 @@ class UserForm extends Model
         return $form;
     }
 
-    public function getUser(): User|null
+    public function getUser()
     {
         return $this->_user;
     }
@@ -61,7 +60,7 @@ class UserForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         //na edicao, o username e o email do proprio utilizador nao contam como repetidos
         $semOProprio = fn($query) => $this->_user ? $query->andWhere(['<>', 'id', $this->_user->id]) : $query;
@@ -87,7 +86,7 @@ class UserForm extends Model
     /**
      * O admin nao pode tirar o role de admin nem desativar a propria conta (ficava trancado fora).
      */
-    public function validateNaoSeTrancar(string $attribute): void
+    public function validateNaoSeTrancar(string $attribute)
     {
         if ($this->_user !== null && $this->_user->id === (int) Yii::$app->user->id) {
             if ($this->role !== 'admin' || (int) $this->status !== User::STATUS_ACTIVE) {
@@ -99,7 +98,7 @@ class UserForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels(): array
+    public function attributeLabels()
     {
         return [
             'username' => 'Nome de utilizador',
@@ -112,53 +111,45 @@ class UserForm extends Model
     }
 
     /**
-     * Grava tudo numa transacao: o utilizador, o perfil e o role. Devolve true se correu bem.
+     * Grava o utilizador, o perfil e o role.
      */
-    public function save(): bool
+    public function save()
     {
         if (!$this->validate()) {
             return false;
         }
 
-        $transaction = Yii::$app->db->beginTransaction();
-        try {
-            //1. o utilizador
-            $user = $this->_user ?? new User();
-            $user->username = $this->username;
-            $user->email = $this->email;
-            $user->status = (int) $this->status;
-            if ($this->password !== '') {
-                $user->setPassword($this->password);
-            }
-            if ($user->isNewRecord) {
-                $user->generateAuthKey();
-            }
-            if (!$user->save()) {
-                throw new \RuntimeException('utilizador: ' . json_encode($user->errors));
-            }
-
-            //2. o perfil: o nome e o tipo (user_type) igual ao role
-            $perfil = Perfil::findOne(['user_id' => $user->id]) ?? new Perfil(['user_id' => $user->id]);
-            $perfil->nome = $this->nome;
-            $perfil->user_type = $this->role;
-            if (!$perfil->save()) {
-                throw new \RuntimeException('perfil: ' . json_encode($perfil->errors));
-            }
-
-            //3. o role do RBAC: tira os antigos e da o novo
-            $auth = Yii::$app->authManager;
-            $auth->revokeAll($user->id);
-            $auth->assign($auth->getRole($this->role), $user->id);
-
-            $transaction->commit();
-            $this->_user = $user;
-
-            return true;
-        } catch (\Throwable $e) {
-            $transaction->rollBack();
-            $this->addError('username', 'Não foi possível guardar (' . $e->getMessage() . ').');
+        $user = $this->_user ?? new User();
+        $user->username = $this->username;
+        $user->email = $this->email;
+        $user->status = (int) $this->status;
+        if ($this->password !== '') {
+            $user->setPassword($this->password);
+        }
+        if ($user->isNewRecord) {
+            $user->generateAuthKey();
+        }
+        if (!$user->save()) {
+            $this->addErrors($user->errors);
 
             return false;
         }
+        $this->_user = $user;
+
+        //user_type igual ao role
+        $perfil = Perfil::findOne(['user_id' => $user->id]) ?? new Perfil(['user_id' => $user->id]);
+        $perfil->nome = $this->nome;
+        $perfil->user_type = $this->role;
+        if (!$perfil->save()) {
+            $this->addError('nome', 'Não foi possível gravar o perfil.');
+
+            return false;
+        }
+
+        $auth = Yii::$app->authManager;
+        $auth->revokeAll($user->id);
+        $auth->assign($auth->getRole($this->role), $user->id);
+
+        return true;
     }
 }

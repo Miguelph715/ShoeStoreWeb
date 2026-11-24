@@ -36,7 +36,7 @@ class Perfil extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName(): string
+    public static function tableName()
     {
         return '{{%perfil}}';
     }
@@ -44,7 +44,7 @@ class Perfil extends \yii\db\ActiveRecord
     /**
      * Preenche sozinho o created_at e o updated_at (colunas obrigatorias da tabela).
      */
-    public function behaviors(): array
+    public function behaviors()
     {
         return [
             TimestampBehavior::class,
@@ -97,7 +97,7 @@ class Perfil extends \yii\db\ActiveRecord
     /**
      * Os tipos de utilizador (os mesmos nomes dos roles do RBAC).
      */
-    public static function typeList(): array
+    public static function typeList()
     {
         return [
             self::TYPE_CLIENTE => 'Cliente',

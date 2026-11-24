@@ -8,12 +8,12 @@ use Codeception\Module;
 
 final class Functional extends Module
 {
-    public function seeValidationError(string $message): void
+    public function seeValidationError(string $message)
     {
         $this->getModule('Yii2')->see($message, '.invalid-feedback');
     }
 
-    public function dontSeeValidationError(string $message): void
+    public function dontSeeValidationError(string $message)
     {
         $this->getModule('Yii2')->dontSee($message, '.invalid-feedback');
     }

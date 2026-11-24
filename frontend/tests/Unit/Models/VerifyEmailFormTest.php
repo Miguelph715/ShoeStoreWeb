@@ -14,7 +14,7 @@ use yii\base\InvalidArgumentException;
 final class VerifyEmailFormTest extends Unit
 {
     protected UnitTester $tester;
-    public function _before(): void
+    public function _before()
     {
         $this->tester->haveFixtures(
             [
@@ -26,34 +26,34 @@ final class VerifyEmailFormTest extends Unit
         );
     }
 
-    public function testVerifyWrongToken(): void
+    public function testVerifyWrongToken()
     {
         $this->tester->expectThrowable(
             InvalidArgumentException::class, 
-            static function (): void {
+            static function () {
                 new VerifyEmailForm('');
             },
         );
 
         $this->tester->expectThrowable(
             InvalidArgumentException::class,
-            static function (): void {
+            static function () {
                 new VerifyEmailForm('notexistingtoken_1391882543');
             }
         );
     }
 
-    public function testAlreadyActivatedToken(): void
+    public function testAlreadyActivatedToken()
     {
         $this->tester->expectThrowable(
             InvalidArgumentException::class, 
-            static function (): void {
+            static function () {
                 new VerifyEmailForm('already_used_token_1548675330');
             },
         );
     }
 
-    public function testVerifyCorrectToken(): void
+    public function testVerifyCorrectToken()
     {
         $model = new VerifyEmailForm('4ch0qbfhvWwkcuWqjN8SWRq72SOw1KYT_1548675330');
 

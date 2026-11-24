@@ -19,7 +19,7 @@ class ProdutoController extends Controller
     /**
      * A lista de produtos, com os filtros do endereco.
      */
-    public function actionIndex(): string
+    public function actionIndex()
     {
         $filtro = new ProdutoFiltro();
         $dataProvider = $filtro->search($this->request->queryParams);
@@ -34,7 +34,7 @@ class ProdutoController extends Controller
     /**
      * O detalhe de um produto: tamanhos com stock, cores e produtos parecidos.
      */
-    public function actionView(int $id): string
+    public function actionView(int $id)
     {
         $produto = Produto::find()
             ->with(['marca', 'categoria', 'produtoTamanhos.tamanho', 'cors'])
@@ -67,7 +67,7 @@ class ProdutoController extends Controller
     /**
      * Todas as marcas, com o numero de produtos de cada uma.
      */
-    public function actionMarcas(): string
+    public function actionMarcas()
     {
         $marcas = (new Query())
             ->select(['m.id', 'm.nome', 'n' => 'COUNT(p.id)'])

@@ -28,7 +28,7 @@ class AlterarPasswordForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
             [['atual', 'nova', 'repetir'], 'required'],
@@ -41,7 +41,7 @@ class AlterarPasswordForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels(): array
+    public function attributeLabels()
     {
         return [
             'atual' => 'Password atual',
@@ -50,7 +50,7 @@ class AlterarPasswordForm extends Model
         ];
     }
 
-    public function validateAtual(string $attribute): void
+    public function validateAtual(string $attribute)
     {
         if (!$this->hasErrors() && !$this->_user->validatePassword($this->atual)) {
             $this->addError($attribute, 'A password atual está errada.');
@@ -60,7 +60,7 @@ class AlterarPasswordForm extends Model
     /**
      * Grava a password nova. Devolve true se correu bem.
      */
-    public function guardar(): bool
+    public function guardar()
     {
         if (!$this->validate()) {
             return false;

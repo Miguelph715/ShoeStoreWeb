@@ -10,7 +10,7 @@ use yii\db\Migration;
  */
 class m261022_100015_create_produto_cor_table extends Migration
 {
-    public function safeUp(): void
+    public function safeUp()
     {
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
@@ -32,7 +32,7 @@ class m261022_100015_create_produto_cor_table extends Migration
         $this->addForeignKey('fk_pc_cor', '{{%produto_cor}}', 'cor_id', '{{%cor}}', 'id', 'RESTRICT', 'CASCADE');
     }
 
-    public function safeDown(): void
+    public function safeDown()
     {
         $this->dropTable('{{%produto_cor}}');
     }

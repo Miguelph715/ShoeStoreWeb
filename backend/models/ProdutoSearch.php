@@ -27,7 +27,7 @@ class ProdutoSearch extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
             [['id', 'marca_id', 'categoria_id', 'ativo'], 'integer'],
@@ -35,12 +35,12 @@ class ProdutoSearch extends Model
         ];
     }
 
-    public static function opcoesStock(): array
+    public static function opcoesStock()
     {
         return ['esgotado' => 'Esgotado', 'baixo' => 'Stock baixo (até 5)', 'normal' => 'Stock normal'];
     }
 
-    public function search(array $params): ActiveDataProvider
+    public function search(array $params)
     {
         $query = Produto::find()->alias('p')->with(['marca', 'categoria', 'produtoTamanhos']);
 

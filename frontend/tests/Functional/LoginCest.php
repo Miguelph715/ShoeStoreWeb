@@ -9,7 +9,7 @@ use frontend\tests\Support\FunctionalTester;
 
 final class LoginCest
 {
-    public function _fixtures(): array
+    public function _fixtures()
     {
         return [
             'user' => [
@@ -19,12 +19,12 @@ final class LoginCest
         ];
     }
 
-    public function _before(FunctionalTester $I): void
+    public function _before(FunctionalTester $I)
     {
         $I->amOnRoute('site/login');
     }
 
-    protected function formParams(string $login, string $password): array
+    protected function formParams(string $login, string $password)
     {
         return [
             'LoginForm[username]' => $login,
@@ -32,26 +32,26 @@ final class LoginCest
         ];
     }
 
-    public function checkEmpty(FunctionalTester $I): void
+    public function checkEmpty(FunctionalTester $I)
     {
         $I->submitForm('#login-form', $this->formParams('', ''));
         $I->seeValidationError('Username cannot be blank.');
         $I->seeValidationError('Password cannot be blank.');
     }
 
-    public function checkWrongPassword(FunctionalTester $I): void
+    public function checkWrongPassword(FunctionalTester $I)
     {
         $I->submitForm('#login-form', $this->formParams('admin', 'wrong'));
         $I->seeValidationError('Incorrect username or password.');
     }
 
-    public function checkInactiveAccount(FunctionalTester $I): void
+    public function checkInactiveAccount(FunctionalTester $I)
     {
         $I->submitForm('#login-form', $this->formParams('test.test', 'Test1234'));
         $I->seeValidationError('Incorrect username or password');
     }
 
-    public function checkValidLogin(FunctionalTester $I): void
+    public function checkValidLogin(FunctionalTester $I)
     {
         $I->submitForm('#login-form', $this->formParams('erau', 'password_0'));
         $I->seeLink('Logout (erau)');

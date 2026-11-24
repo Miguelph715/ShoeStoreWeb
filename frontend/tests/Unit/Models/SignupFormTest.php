@@ -15,7 +15,7 @@ use yii\mail\MessageInterface;
 final class SignupFormTest extends Unit
 {
     protected UnitTester $tester;
-    public function _before(): void
+    public function _before()
     {
         $this->tester->haveFixtures(
             [
@@ -27,7 +27,7 @@ final class SignupFormTest extends Unit
         );
     }
 
-    public function testCorrectSignup(): void
+    public function testCorrectSignup()
     {
         $model = new SignupForm(
             [
@@ -66,7 +66,7 @@ final class SignupFormTest extends Unit
             ->stringContainsString($user->verification_token);
     }
 
-    public function testNotCorrectSignup(): void
+    public function testNotCorrectSignup()
     {
         $model = new SignupForm(
             [

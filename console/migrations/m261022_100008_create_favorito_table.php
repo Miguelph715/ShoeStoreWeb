@@ -6,7 +6,7 @@ use yii\db\Migration;
 
 class m261022_100008_create_favorito_table extends Migration
 {
-    public function safeUp(): void
+    public function safeUp()
     {
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
@@ -28,7 +28,7 @@ class m261022_100008_create_favorito_table extends Migration
         $this->addForeignKey('fk_favorito_produto', '{{%favorito}}', 'produto_id', '{{%produto}}', 'id', 'CASCADE', 'CASCADE');
     }
 
-    public function safeDown(): void
+    public function safeDown()
     {
         $this->dropTable('{{%favorito}}');
     }

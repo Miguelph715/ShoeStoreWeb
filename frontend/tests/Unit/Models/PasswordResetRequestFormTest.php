@@ -15,7 +15,7 @@ use yii\mail\MessageInterface;
 final class PasswordResetRequestFormTest extends Unit
 {
     protected UnitTester $tester;
-    public function _before(): void
+    public function _before()
     {
         $this->tester->haveFixtures(
             [
@@ -27,7 +27,7 @@ final class PasswordResetRequestFormTest extends Unit
         );
     }
 
-    public function testSendMessageWithWrongEmailAddress(): void
+    public function testSendMessageWithWrongEmailAddress()
     {
         $model = new PasswordResetRequestForm();
 
@@ -37,7 +37,7 @@ final class PasswordResetRequestFormTest extends Unit
             ->false();
     }
 
-    public function testNotSendEmailsToInactiveUser(): void
+    public function testNotSendEmailsToInactiveUser()
     {
         $user = $this->tester->grabFixture('user', 1);
 
@@ -49,7 +49,7 @@ final class PasswordResetRequestFormTest extends Unit
             ->false();
     }
 
-    public function testSendEmailSuccessfully(): void
+    public function testSendEmailSuccessfully()
     {
         $userFixture = $this->tester->grabFixture('user', 0);
 

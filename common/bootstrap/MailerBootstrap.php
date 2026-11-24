@@ -22,7 +22,7 @@ final class MailerBootstrap implements BootstrapInterface
     /**
      * @param Application $app Application instance.
      */
-    public function bootstrap($app): void
+    public function bootstrap($app)
     {
         Yii::$container->setSingleton(MailerInterface::class, $app->mailer);
     }

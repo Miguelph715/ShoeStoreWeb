@@ -9,7 +9,7 @@ use yii\db\Migration;
  */
 class m261022_100013_create_linha_encomenda_table extends Migration
 {
-    public function safeUp(): void
+    public function safeUp()
     {
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
@@ -35,7 +35,7 @@ class m261022_100013_create_linha_encomenda_table extends Migration
         $this->addForeignKey('fk_le_tamanho', '{{%linha_encomenda}}', 'tamanho_id', '{{%tamanho}}', 'id', 'RESTRICT', 'CASCADE');
     }
 
-    public function safeDown(): void
+    public function safeDown()
     {
         $this->dropTable('{{%linha_encomenda}}');
     }

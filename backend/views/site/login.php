@@ -36,7 +36,7 @@ $this->title = 'Entrar';
             <?php
             //se o campo tem erro, mostra um icone com um balao ao passar o rato
             //(a mensagem do erro continua a aparecer por baixo do campo)
-            $icone = static fn(string $campo, string $dica): string => $model->hasErrors($campo)
+            $icone = static fn(string $campo, string $dica) => $model->hasErrors($campo)
                 ? Html::tag('span', '<i class="fas fa-exclamation-circle"></i>', [
                     'class' => 'shoe-field-alert',
                     'tabindex' => 0,

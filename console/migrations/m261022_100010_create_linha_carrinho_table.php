@@ -6,7 +6,7 @@ use yii\db\Migration;
 
 class m261022_100010_create_linha_carrinho_table extends Migration
 {
-    public function safeUp(): void
+    public function safeUp()
     {
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
@@ -28,7 +28,7 @@ class m261022_100010_create_linha_carrinho_table extends Migration
         $this->addForeignKey('fk_lc_pt', '{{%linha_carrinho}}', 'produto_tamanho_id', '{{%produto_tamanho}}', 'id', 'CASCADE', 'CASCADE');
     }
 
-    public function safeDown(): void
+    public function safeDown()
     {
         $this->dropTable('{{%linha_carrinho}}');
     }

@@ -19,7 +19,7 @@ class CarrinhoController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors(): array
+    public function behaviors()
     {
         return [
             'access' => [
@@ -40,7 +40,7 @@ class CarrinhoController extends Controller
         ];
     }
 
-    public function actionIndex(): string
+    public function actionIndex()
     {
         return $this->render('index', [
             'linhas' => Cart::detalhe(),
@@ -48,7 +48,7 @@ class CarrinhoController extends Controller
         ]);
     }
 
-    public function actionAdicionar(): Response
+    public function actionAdicionar()
     {
         $post = $this->request->post();
         $erro = Cart::adicionar(
@@ -72,7 +72,7 @@ class CarrinhoController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionAtualizar(): Response
+    public function actionAtualizar()
     {
         $aviso = Cart::atualizar((string) $this->request->post('chave'), (int) $this->request->post('quantidade'));
         if ($aviso !== null) {
@@ -82,7 +82,7 @@ class CarrinhoController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionRemover(): Response
+    public function actionRemover()
     {
         Cart::remover((string) $this->request->post('chave'));
         Yii::$app->session->setFlash('success', 'Produto retirado do carrinho.');
@@ -93,7 +93,7 @@ class CarrinhoController extends Controller
     /**
      * Volta a pagina de onde o pedido veio (so se for deste site), ou vai para a rota por omissao.
      */
-    private function voltar(array $padrao): Response
+    private function voltar(array $padrao)
     {
         $anterior = $this->request->referrer;
         if ($anterior && str_starts_with($anterior, $this->request->hostInfo)) {

@@ -23,7 +23,7 @@ class EncomendaController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors(): array
+    public function behaviors()
     {
         return array_merge(
             parent::behaviors(),
@@ -42,7 +42,7 @@ class EncomendaController extends Controller
         );
     }
 
-    public function actionIndex(): string
+    public function actionIndex()
     {
         $searchModel = new EncomendaSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -50,7 +50,7 @@ class EncomendaController extends Controller
         return $this->render('index', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }
 
-    public function actionView(int $id): string
+    public function actionView(int $id)
     {
         return $this->render('view', ['model' => $this->findModel($id)]);
     }
@@ -58,7 +58,7 @@ class EncomendaController extends Controller
     /**
      * Muda o estado (Pendente, Confirmada, Enviada, Entregue ou Cancelada), respeitando o fluxo.
      */
-    public function actionEstado(int $id): Response
+    public function actionEstado(int $id)
     {
         $encomenda = $this->findModel($id);
         $erro = Encomendas::mudarEstado($encomenda, (string) $this->request->post('estado'));
@@ -75,7 +75,7 @@ class EncomendaController extends Controller
     /**
      * @throws NotFoundHttpException se a encomenda nao existir
      */
-    protected function findModel(int $id): Encomenda
+    protected function findModel(int $id)
     {
         $encomenda = Encomenda::find()->with(['user', 'metodoPagamento', 'linhaEncomendas.produto', 'linhaEncomendas.tamanho', 'linhaEncomendas.cor'])->where(['id' => $id])->one();
         if ($encomenda === null) {

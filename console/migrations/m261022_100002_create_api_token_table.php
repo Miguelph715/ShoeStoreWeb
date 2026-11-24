@@ -9,7 +9,7 @@ use yii\db\Migration;
  */
 class m261022_100002_create_api_token_table extends Migration
 {
-    public function safeUp(): void
+    public function safeUp()
     {
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
@@ -28,7 +28,7 @@ class m261022_100002_create_api_token_table extends Migration
         $this->addForeignKey('fk_api_token_user', '{{%api_token}}', 'user_id', '{{%user}}', 'id', 'CASCADE', 'CASCADE');
     }
 
-    public function safeDown(): void
+    public function safeDown()
     {
         $this->dropTable('{{%api_token}}');
     }

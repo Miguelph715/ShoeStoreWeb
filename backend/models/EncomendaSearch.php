@@ -21,7 +21,7 @@ class EncomendaSearch extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
             ['id', 'integer'],
@@ -29,12 +29,12 @@ class EncomendaSearch extends Model
         ];
     }
 
-    public static function estados(): array
+    public static function estados()
     {
         return array_combine(Encomendas::ESTADOS, Encomendas::ESTADOS);
     }
 
-    public function search(array $params): ActiveDataProvider
+    public function search(array $params)
     {
         $query = Encomenda::find()->alias('e')->joinWith('user u')->with('metodoPagamento');
 

@@ -10,7 +10,7 @@ use yii\db\Migration;
  */
 class m261022_100016_add_produto_cor_id_to_linha_carrinho_table extends Migration
 {
-    public function safeUp(): void
+    public function safeUp()
     {
         $this->addColumn('{{%linha_carrinho}}', 'produto_cor_id', $this->integer()->notNull());
 
@@ -24,7 +24,7 @@ class m261022_100016_add_produto_cor_id_to_linha_carrinho_table extends Migratio
         $this->addForeignKey('fk_lc_pc', '{{%linha_carrinho}}', 'produto_cor_id', '{{%produto_cor}}', 'id', 'CASCADE', 'CASCADE');
     }
 
-    public function safeDown(): void
+    public function safeDown()
     {
         $this->dropForeignKey('fk_lc_pc', '{{%linha_carrinho}}');
         $this->dropIndex('idx_linha_carrinho_pc', '{{%linha_carrinho}}');

@@ -9,7 +9,7 @@ use common\fixtures\UserFixture;
 
 final class LoginCest
 {
-    public function _fixtures(): array
+    public function _fixtures()
     {
         return [
             'user' => [
@@ -19,7 +19,7 @@ final class LoginCest
         ];
     }
 
-    public function loginUser(FunctionalTester $I): void
+    public function loginUser(FunctionalTester $I)
     {
         $I->amOnRoute('/site/login');
         $I->fillField('Your Username', 'erau');

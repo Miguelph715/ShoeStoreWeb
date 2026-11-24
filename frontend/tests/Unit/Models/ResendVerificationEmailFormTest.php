@@ -14,7 +14,7 @@ use yii\mail\MessageInterface;
 final class ResendVerificationEmailFormTest extends Unit
 {
     protected UnitTester $tester;
-    public function _before(): void
+    public function _before()
     {
         $this->tester->haveFixtures(
             [
@@ -26,7 +26,7 @@ final class ResendVerificationEmailFormTest extends Unit
         );
     }
 
-    public function testWrongEmailAddress(): void
+    public function testWrongEmailAddress()
     {
         $model = new ResendVerificationEmailForm();
 
@@ -40,7 +40,7 @@ final class ResendVerificationEmailFormTest extends Unit
             ->equals('There is no user with this email address.');
     }
 
-    public function testEmptyEmailAddress(): void
+    public function testEmptyEmailAddress()
     {
         $model = new ResendVerificationEmailForm();
 
@@ -54,7 +54,7 @@ final class ResendVerificationEmailFormTest extends Unit
             ->equals('Email cannot be blank.');
     }
 
-    public function testResendToActiveUser(): void
+    public function testResendToActiveUser()
     {
         $model = new ResendVerificationEmailForm();
 
@@ -68,7 +68,7 @@ final class ResendVerificationEmailFormTest extends Unit
             ->equals('There is no user with this email address.');
     }
 
-    public function testSuccessfullyResend(): void
+    public function testSuccessfullyResend()
     {
         $model = new ResendVerificationEmailForm();
 
